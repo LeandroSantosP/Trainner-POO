@@ -11,17 +11,17 @@
   },
   "_moduleAliases": {
     "@/*": [
-        "./dist/src/*"
-      ],
-      "@/application/*": [
-        "./dist/src/application/*"
-      ],
-      "@/infra/*": [
-        "./dist/src/infra/*"
-      ],
-      "@/domain/*": [
-        "./dist/src/domain/*"
-      ]
+      "./dist/src/*"
+    ],
+    "@/application/*": [
+      "./dist/src/application/*"
+    ],
+    "@/infra/*": [
+      "./dist/src/infra/*"
+    ],
+    "@/domain/*": [
+      "./dist/src/domain/*"
+    ]
   },
   "author": "Leandro Pereira Dos Santos",
   "license": "ISC",
@@ -43,6 +43,7 @@
     "typescript": "*"
   },
   "dependencies": {
+    "currency.js": "^2.0.4",
     "dotenv": "^16.3.1",
     "module-alias": "^2.2.3",
     "pino": "^8.5.0",
