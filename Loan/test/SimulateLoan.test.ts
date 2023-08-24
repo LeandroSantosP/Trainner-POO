@@ -1,4 +1,4 @@
-import { SimulateLoan } from "@/application/SimulateLoan";
+import { SimulateLoan } from "@/application";
 
 test("deve ser possível simular um emprestimo com a tabela price", async function () {
     const simulateLoan = new SimulateLoan();
@@ -11,8 +11,7 @@ test("deve ser possível simular um emprestimo com a tabela price", async functi
         tableType: "price",
     };
     const output = await simulateLoan.execute(input);
-
-    expect(output.installments.at(1).balance).toBe(336365.66);
-    expect(output.installments.at(output.installments.length - 1).balance).toBe(57464.73);
-    expect(output.installments.at(output.installments.length - 2).balance).toBe(0);
+    expect(output.installments.at(0)?.balance).toBe(336365.66);
+    expect(output.installments.at(output.installments.length - 2)?.balance).toBe(57464.73);
+    expect(output.installments.at(output.installments.length - 1)?.balance).toBe(0);
 });
