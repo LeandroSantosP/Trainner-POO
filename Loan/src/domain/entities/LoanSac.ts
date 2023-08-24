@@ -30,6 +30,7 @@ export class LoanSac extends Loan {
             installments.push(instalment);
             installmentNumber++;
         }
+        this.status = "approved";
         return installments;
     }
 
@@ -39,7 +40,8 @@ export class LoanSac extends Loan {
             input.purchaseTotalPrice,
             input.downPayment,
             input.salary,
-            input.period
+            input.period,
+            input.tableType
         );
     }
 }

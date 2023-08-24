@@ -8,6 +8,7 @@ export class SubmitLoan {
     ) {}
     async execute(input: Input): Promise<void> {
         const loan = LoanFactory.createLoan(input);
+
         await this.loanRepository.save(loan);
         for (const installment of loan.Installments) {
             await this.installmentRepository.save(installment);

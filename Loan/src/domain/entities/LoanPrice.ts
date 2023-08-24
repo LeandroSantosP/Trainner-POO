@@ -31,6 +31,7 @@ export class LoanPrice extends Loan {
             installments.push(instalment);
             installmentNumber++;
         }
+        this.status = "approved";
         return installments;
     }
 
@@ -40,7 +41,8 @@ export class LoanPrice extends Loan {
             input.purchaseTotalPrice,
             input.downPayment,
             input.salary,
-            input.period
+            input.period,
+            input.tableType
         );
     }
 }

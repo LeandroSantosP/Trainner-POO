@@ -3,15 +3,15 @@ import { LoanPrice } from "../entities/LoanPrice";
 import { LoanSac } from "../entities/LoanSac";
 
 export class LoanFactory {
-    static createLoan({ tableType, ...params }: LoanFactoryInput): Loan {
+    static createLoan(params: LoanFactoryInput): Loan {
         const price = LoanPrice.create(params);
         const sac = LoanSac.create(params);
         const loan = {
             price,
             sac,
         } as { [key: string]: Loan };
-        if (!loan[tableType]) throw new Error("Invalid loan table!");
-        return loan[tableType];
+        if (!loan[params.tableType]) throw new Error("Invalid loan table!");
+        return loan[params.tableType];
     }
 }
 
