@@ -1,53 +1,19 @@
-import currency from "currency.js";
+import { LoanFactory } from "@/domain/factory/LoanFactory";
+import { LoanRepository } from "../repository/LoanRepository";
+import { InstallmentRepository } from "../repository/InstallmentRepository";
 export class SubmitLoan {
-    constructor(loanRepository: any) {}
+    constructor(
+        private readonly loanRepository: LoanRepository,
+        private readonly installmentRepository: InstallmentRepository
+    ) {}
     async execute(input: Input): Promise<void> {
-        const loanRate = 1;
-        const loanAmount = input.purchaseTotalPrice - input.downPayment;
-        let rate = loanRate / 100;
-        let balance = currency(loanAmount);
-        let installmentNumber = 1;
-
-        let installments = [];
-
-        if (input.tableType === "price") {
-            let formula = Math.pow(1 + rate, input.period);
-            let amount = balance.multiply((formula * rate) / (formula - 1));
-            while (balance.value > 0) {
-                let interest = balance.multiply(rate);
-                let amortization = amount.subtract(interest);
-                balance = balance.subtract(amortization);
-                if (balance.value <= 0.05) balance = currency(0);
-
-                installments.push({
-                    installmentNumber,
-                    amount: amount.value,
-                    interest: interest.value,
-                    amortization: amortization.value,
-                    balance: balance.value,
-                });
-                installmentNumber++;
-            }
+        const loan = LoanFactory.createLoan(input);
+        await this.loanRepository.save(loan);
+        for (const installment of loan.Installments) {
+            await this.installmentRepository.save(installment);
         }
-        if (input.tableType === "sac") {
-            let amortization = currency(balance.value / input.period);
-            while (balance.value > 0) {
-                let saldoInicial = currency(balance.value);
-                let interest = currency(saldoInicial.value * rate);
-                let updatedBalance = currency(saldoInicial.value + interest.value);
-                let amount = currency(interest.value + amortization.value);
-                balance = currency(updatedBalance.value - amount.value);
-                if (balance.value <= 0.05) balance = currency(0);
-                installments.push({
-                    installmentNumber,
-                    amount: amount.value,
-                    interest: interest.value,
-                    amortization: amortization.value,
-                    balance: balance.value,
-                });
-                installmentNumber++;
-            }
-        }
+
+        // LoanSubmitted
     }
 }
 

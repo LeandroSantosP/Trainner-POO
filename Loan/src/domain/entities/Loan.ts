@@ -1,7 +1,8 @@
 import { Installment } from "./Installment";
 
 export abstract class Loan {
-    private Installments: Installment[];
+    Installments: Installment[];
+    protected loanAmount: number;
 
     constructor(
         private readonly code: string,
@@ -10,6 +11,10 @@ export abstract class Loan {
         readonly salary: number,
         readonly period: number
     ) {
+        this.loanAmount = this.purchaseTotalPrice - this.downPayment;
+        if (this.salary * 0.25 < this.loanAmount / this.period) {
+            throw new Error("Insufficient salary");
+        }
         this.Installments = this.generateInstallments();
     }
 

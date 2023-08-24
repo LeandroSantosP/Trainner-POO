@@ -6,9 +6,8 @@ import currency from "currency.js";
 export class LoanSac extends Loan {
     protected generateInstallments(): Installment[] {
         const loanRate = 1;
-        const loanAmount = this.purchaseTotalPrice - this.downPayment;
         let rate = loanRate / 100;
-        let balance = currency(loanAmount);
+        let balance = currency(this.loanAmount);
         let installmentNumber = 1;
 
         let installments: Installment[] = [];
