@@ -1,4 +1,4 @@
-import { LoanService } from "@/application/service/LoanService";
+import { LoanService } from "@/application";
 import { RepositoryFactoryMemory } from "@/infra/factory/RepositoryFactoryMemory";
 
 const repositoryFactory = new RepositoryFactoryMemory();
