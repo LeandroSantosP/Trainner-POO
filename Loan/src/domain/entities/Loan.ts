@@ -14,7 +14,7 @@ export abstract class Loan {
         readonly tableType: string
     ) {
         this.loanAmount = this.purchaseTotalPrice - this.downPayment;
-        if (this.salary * 0.25 < this.loanAmount / this.period) {
+        if (salary * 0.25 < this.loanAmount / period) {
             throw new Error("Insufficient salary");
         }
         this.status = "received";
