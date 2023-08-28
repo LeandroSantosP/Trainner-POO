@@ -4,12 +4,13 @@ import { RepositoryAndQueueFactory } from "../factory/RepositoryAndQueueFactory"
 import { LoanRepository } from "../repository/LoanRepository";
 import { MailerMessage } from "@/domain/entities/Message";
 import { Mailer } from "../interfaces/Mailer";
+import { MailerRepository } from "../repository/MailerRepository";
 
 export class MailerEventHandler implements Handler {
     eventName = "mailerEvent";
     mailerGetaway: Mailer;
     loanRepository: LoanRepository;
-    mailerRepository: any;
+    mailerRepository: MailerRepository;
     constructor(repositoryAndQueueFactory: RepositoryAndQueueFactory) {
         this.loanRepository = repositoryAndQueueFactory.loanRepository();
         this.mailerGetaway = repositoryAndQueueFactory.mailerGateway();

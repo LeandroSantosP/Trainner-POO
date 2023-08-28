@@ -7,6 +7,8 @@ import { Queue } from "@/application/interfaces/Queue";
 import { MediatorQueue } from "../queue/MediatorQueue";
 import { Mailer } from "@/application/interfaces/Mailer";
 import { MailerGatewayMemory } from "../gateway/MailerGatewayMemory";
+import { MailerRepository } from "@/application/repository/MailerRepository";
+import { MailerRepositoryMemory } from "../repository/MailerRepositoryMemory";
 
 export class RepositoryAndQueueFactoryMemory implements RepositoryAndQueueFactory {
     queueController(): Queue {
@@ -21,5 +23,7 @@ export class RepositoryAndQueueFactoryMemory implements RepositoryAndQueueFactor
     mailerGateway(): Mailer {
         return new MailerGatewayMemory();
     }
-    mailerRepository() {}
+    mailerRepository(): MailerRepository {
+        return new MailerRepositoryMemory();
+    }
 }
