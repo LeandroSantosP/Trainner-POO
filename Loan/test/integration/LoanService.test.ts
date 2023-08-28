@@ -4,9 +4,8 @@ import { RepositoryAndQueueFactoryMemory } from "@/infra/factory/RepositoryFacto
 
 const repositoryFactory = new RepositoryAndQueueFactoryMemory();
 const mediatorQueue = repositoryFactory.queueController();
-const mailerEventHandler = new MailerEventHandler();
+const mailerEventHandler = new MailerEventHandler(repositoryFactory);
 mediatorQueue.register("mailerEvent", mailerEventHandler);
-
 const loanService = new LoanService(repositoryFactory);
 test("Deve ser possível criar um Financiamento e obter-lo através do serviço de Loan", async function () {
     const submitLoanInput = {

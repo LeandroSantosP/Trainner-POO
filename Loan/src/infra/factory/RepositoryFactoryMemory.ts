@@ -5,6 +5,8 @@ import { LoanRepositoryMemory } from "../repository/LoanRepositoryMemory";
 import { InstallmentRepositoryMemory } from "../repository/InstallmentRepositoryMemory";
 import { Queue } from "@/application/interfaces/Queue";
 import { MediatorQueue } from "../queue/MediatorQueue";
+import { Mailer } from "@/application/interfaces/Mailer";
+import { MailerGatewayMemory } from "../gateway/MailerGatewayMemory";
 
 export class RepositoryAndQueueFactoryMemory implements RepositoryAndQueueFactory {
     queueController(): Queue {
@@ -16,4 +18,8 @@ export class RepositoryAndQueueFactoryMemory implements RepositoryAndQueueFactor
     installmentRepository(): InstallmentRepository {
         return new InstallmentRepositoryMemory();
     }
+    mailerGateway(): Mailer {
+        return new MailerGatewayMemory();
+    }
+    mailerRepository() {}
 }

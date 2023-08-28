@@ -1,6 +1,6 @@
 import { ApplicationEvent } from "./ApplicationEvent";
 
 export interface Handler {
-    handlerName: string;
+    eventName: string;
     handle(applicationEvent: ApplicationEvent): Promise<any>;
 }

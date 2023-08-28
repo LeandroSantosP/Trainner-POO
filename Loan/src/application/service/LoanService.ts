@@ -30,14 +30,19 @@ export class LoanService {
             await this.installmentRepository.save(installment);
         }
 
+        // the client infos most be brought from a repository (RequesterRepo)
+
         const mailerEvent = new MailerEvent(
-            "john.Doe@gmail.com",
             loan.getCode(),
+            "john.Doe@gmail.com",
+            "myCompanyName@gmail.com",
             "Financiamento",
             "Seu financiamento foi aprovado com successor"
         );
 
         this.queue.publisher("mailerEvent", mailerEvent);
+
+        // LoanSubmitted
     }
 
     async simulateLoan(input: SimulateLoanInput): Promise<SimulateLoanOutput> {

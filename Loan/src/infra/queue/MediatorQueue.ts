@@ -19,9 +19,9 @@ export class MediatorQueue implements Queue {
         this.handlers.set(handlerName, handler);
     }
     async publisher(eventName: string, applicationEvent: ApplicationEvent): Promise<void> {
-        if (this.handlers.has(eventName)) {
-            const handler = this.handlers.get(eventName);
-            if (!handler) return;
+        const handler = this.handlers.get(eventName);
+        if (!handler) return;
+        if (handler.eventName === applicationEvent.applicationEvent) {
             await handler.handle(applicationEvent);
         }
     }

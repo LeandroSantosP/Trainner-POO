@@ -47,11 +47,3 @@ test("Caso o salario seja insuficiente deve lançar um erro.", function () {
     };
     expect(() => LoanSac.create(input)).toThrow(new Error("Insufficient salary"));
 });
-
-test("", function () {
-    let test = new Set("1");
-
-    for (const [key, value] of test.entries()) {
-        console.log(key, value);
-    }
-});
