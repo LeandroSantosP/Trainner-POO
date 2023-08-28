@@ -1,7 +1,7 @@
 import { Installment } from "./Installment";
 
 export abstract class Loan {
-    Installments: Installment[];
+    Installments: Set<Installment>;
     protected loanAmount: number;
     protected status: string;
 
@@ -29,7 +29,7 @@ export abstract class Loan {
         return this.status;
     }
 
-    protected abstract generateInstallments(): Installment[];
+    protected abstract generateInstallments(): Set<Installment>;
 }
 
 export type LoanCreateInput = {

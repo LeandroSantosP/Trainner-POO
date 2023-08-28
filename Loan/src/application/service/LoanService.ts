@@ -1,6 +1,6 @@
 import { LoanFactory } from "@/domain/factory/LoanFactory";
 import { LoanRepository } from "../repository/LoanRepository";
-import { RepositoryFactory } from "../factory/RepositoryFactory";
+import { RepositoryAndQueueFactory } from "../factory/RepositoryAndQueueFactory";
 import { InstallmentRepository } from "../repository/InstallmentRepository";
 import {
     GetLoanInput,
@@ -9,13 +9,17 @@ import {
     SubmitLoanInput,
     SimulateLoanOutput,
 } from "./LoanServiceTypes";
+import { Queue } from "../interfaces/Queue";
+import { MailerEvent } from "@/infra/event/MailerEvent";
 
 export class LoanService {
     loanRepository: LoanRepository;
     installmentRepository: InstallmentRepository;
-    constructor(repositoryFactory: RepositoryFactory) {
-        this.loanRepository = repositoryFactory.loanRepository();
-        this.installmentRepository = repositoryFactory.installmentRepository();
+    queue: Queue;
+    constructor(repositoryAndQueueFactory: RepositoryAndQueueFactory) {
+        this.loanRepository = repositoryAndQueueFactory.loanRepository();
+        this.installmentRepository = repositoryAndQueueFactory.installmentRepository();
+        this.queue = repositoryAndQueueFactory.queueController();
     }
 
     async submitLoan(input: SubmitLoanInput): Promise<void> {
@@ -26,7 +30,14 @@ export class LoanService {
             await this.installmentRepository.save(installment);
         }
 
-        // LoanSubmitted
+        const mailerEvent = new MailerEvent(
+            "john.Doe@gmail.com",
+            loan.getCode(),
+            "Financiamento",
+            "Seu financiamento foi aprovado com successor"
+        );
+
+        this.queue.publisher("mailerEvent", mailerEvent);
     }
 
     async simulateLoan(input: SimulateLoanInput): Promise<SimulateLoanOutput> {
@@ -34,20 +45,16 @@ export class LoanService {
             installments: [],
         };
 
-        let installments = [];
-
         const loan = LoanFactory.createLoan(input);
-        for (const installment of loan.Installments) {
-            installments.push({
-                installmentNumber: installment.installmentNumber,
-                amount: installment.amount,
-                interest: installment.interest,
-                amortization: installment.amortization,
-                balance: installment.balance,
+        loan.Installments.forEach((loanInstalment) => {
+            output.installments.push({
+                installmentNumber: loanInstalment.installmentNumber,
+                amount: loanInstalment.amount,
+                interest: loanInstalment.interest,
+                amortization: loanInstalment.amortization,
+                balance: loanInstalment.balance,
             });
-        }
-
-        output.installments = installments;
+        });
 
         return output;
     }
@@ -58,7 +65,8 @@ export class LoanService {
             installments: [],
             status: loan.getStatus(),
         };
-        for (const loanInstalment of loan.Installments) {
+
+        loan.Installments.forEach((loanInstalment) => {
             output.installments.push({
                 installmentNumber: loanInstalment.installmentNumber,
                 amount: loanInstalment.amount,
@@ -66,7 +74,7 @@ export class LoanService {
                 amortization: loanInstalment.amortization,
                 balance: loanInstalment.balance,
             });
-        }
+        });
         return output;
     }
 }

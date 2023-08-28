@@ -12,9 +12,11 @@ test("Deve ser possível criar um Financiamento com a tabela price", function ()
     };
     const loan = LoanPrice.create(input);
 
+    const Installments = Array.from(loan.Installments);
+
     expect(loan.getStatus()).toBe("approved");
     expect(loan.getCode()).toBe("12345");
-    expect(loan.Installments.length).toBe(7);
+    expect(Installments.length).toBe(7);
 });
 
 test("Deve ser possível criar um Financiamento com a tabela sac e validar as installments", function () {
@@ -28,9 +30,10 @@ test("Deve ser possível criar um Financiamento com a tabela sac e validar as in
     };
     const loan = LoanSac.create(input);
 
-    expect(loan.Installments.at(0)?.balance).toBe(334714.29);
-    expect(loan.Installments.at(loan.Installments.length - 2)?.balance).toBe(55785.74);
-    expect(loan.Installments.at(loan.Installments.length - 1)?.balance).toBe(0);
+    const Installments = Array.from(loan.Installments);
+    expect(Installments.at(0)?.balance).toBe(334714.29);
+    expect(Installments.at(Installments.length - 2)?.balance).toBe(55785.74);
+    expect(Installments.at(Installments.length - 1)?.balance).toBe(0);
 });
 
 test("Caso o salario seja insuficiente deve lançar um erro.", function () {
@@ -43,4 +46,12 @@ test("Caso o salario seja insuficiente deve lançar um erro.", function () {
         tableType: "sac",
     };
     expect(() => LoanSac.create(input)).toThrow(new Error("Insufficient salary"));
+});
+
+test("", function () {
+    let test = new Set("1");
+
+    for (const [key, value] of test.entries()) {
+        console.log(key, value);
+    }
 });

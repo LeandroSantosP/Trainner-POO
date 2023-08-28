@@ -2,15 +2,16 @@ import { randomUUID } from "crypto";
 import { Loan, LoanCreateInput } from "./Loan";
 import { Installment } from "./Installment";
 import currency from "currency.js";
+import { Serializer } from "v8";
 
 export class LoanSac extends Loan {
-    protected generateInstallments(): Installment[] {
+    protected generateInstallments(): Set<Installment> {
         const loanRate = 1;
         let rate = loanRate / 100;
         let balance = currency(this.loanAmount);
         let installmentNumber = 1;
 
-        let installments: Installment[] = [];
+        let installments: Set<any> = new Set();
 
         let amortization = currency(balance.value / this.period);
         while (balance.value > 0) {
@@ -27,7 +28,7 @@ export class LoanSac extends Loan {
                 amortization.value,
                 balance.value
             );
-            installments.push(instalment);
+            installments.add(instalment);
             installmentNumber++;
         }
         this.status = "approved";
