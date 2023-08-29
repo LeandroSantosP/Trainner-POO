@@ -1,3 +1,4 @@
+import exp from "constants";
 import { HashTable } from "../src/HashTable";
 
 test("Deve criar uma hash a partir de uma key!", function () {
@@ -21,4 +22,17 @@ test("Deve setar um item na hashTable utilizando o metade set e obtelo utilizand
   expect(item2).toBeUndefined();
   expect(item).toBe("johnDoe");
   expect(hashTable.size).toBe(1);
+});
+
+test("Deve setar um item na hashTable utilizando o metade set e remove-lo utilizando o metade remove.", function () {
+  const hashTable = new HashTable(100);
+
+  hashTable.set("name", "johnDoe");
+  const itemAfter = hashTable.get("name");
+  expect(hashTable.size).toBe(1);
+  expect(itemAfter).toBe("johnDoe");
+  hashTable.remove("name");
+  const itemBefore = hashTable.get("name");
+  expect(itemBefore).toBeUndefined();
+  expect(hashTable.size).toBe(0);
 });

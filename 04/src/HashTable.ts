@@ -31,4 +31,16 @@ export class HashTable {
     if (!this.table[index]) return;
     return this.table[index].getValue();
   }
+
+  remove(key: string) {
+    const index = this._hash(key);
+
+    if (this.table[index] && this.table.length) {
+      this.table[index] = undefined as any;
+      this.size--;
+      return true;
+    }
+
+    return false;
+  }
 }
