@@ -5,5 +5,5 @@ test("Deve criar uma hash a partir de uma key!", function () {
 
   const hash = hashTable.hash("name");
 
-  console.log(hash);
+  expect(hash).toBe(417);
 });
