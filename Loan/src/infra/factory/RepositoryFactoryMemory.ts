@@ -24,6 +24,6 @@ export class RepositoryAndQueueFactoryMemory implements RepositoryAndQueueFactor
         return new MailerGatewayMemory();
     }
     mailerRepository(): MailerRepository {
-        return new MailerRepositoryMemory();
+        return MailerRepositoryMemory.getInstance();
     }
 }

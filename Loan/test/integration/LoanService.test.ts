@@ -3,6 +3,7 @@ import { MailerEventHandler } from "@/application/handles/MailerEventHandler";
 import { RepositoryAndQueueFactoryMemory } from "@/infra/factory/RepositoryFactoryMemory";
 
 const repositoryFactory = new RepositoryAndQueueFactoryMemory();
+
 const mediatorQueue = repositoryFactory.queueController();
 const mailerEventHandler = new MailerEventHandler(repositoryFactory);
 mediatorQueue.register("mailerEvent", mailerEventHandler);

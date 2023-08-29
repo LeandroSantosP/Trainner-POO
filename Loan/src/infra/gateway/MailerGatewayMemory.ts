@@ -3,7 +3,7 @@ import { Mailer, SendMailerInput, SendMailerOutPut } from "@/application/interfa
 export class MailerGatewayMemory implements Mailer {
     async sendMailer(input: SendMailerInput): Promise<SendMailerOutPut> {
         return {
-            status: "sended",
+            status: "reject",
         };
     }
 }
