@@ -4,13 +4,13 @@ import { Installment } from "./Installment";
 import currency from "currency.js";
 
 export class LoanPrice extends Loan {
-    protected generateInstallments(): Installment[] {
+    protected generateInstallments(): Set<Installment> {
         const loanRate = 1;
         let rate = loanRate / 100;
         let balance = currency(this.loanAmount);
         let installmentNumber = 1;
 
-        let installments: Installment[] = [];
+        let installments: Set<any> = new Set();
 
         let formula = Math.pow(1 + rate, this.period);
         let amount = balance.multiply((formula * rate) / (formula - 1));
@@ -28,7 +28,7 @@ export class LoanPrice extends Loan {
                 balance.value
             );
 
-            installments.push(instalment);
+            installments.add(instalment);
             installmentNumber++;
         }
         this.status = "approved";

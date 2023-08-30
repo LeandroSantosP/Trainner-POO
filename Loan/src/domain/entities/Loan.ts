@@ -1,7 +1,7 @@
 import { Installment } from "./Installment";
 
 export abstract class Loan {
-    Installments: Installment[];
+    Installments: Set<Installment>;
     protected loanAmount: number;
     protected status: string;
 
@@ -14,7 +14,7 @@ export abstract class Loan {
         readonly tableType: string
     ) {
         this.loanAmount = this.purchaseTotalPrice - this.downPayment;
-        if (this.salary * 0.25 < this.loanAmount / this.period) {
+        if (salary * 0.25 < this.loanAmount / period) {
             throw new Error("Insufficient salary");
         }
         this.status = "received";
@@ -29,7 +29,7 @@ export abstract class Loan {
         return this.status;
     }
 
-    protected abstract generateInstallments(): Installment[];
+    protected abstract generateInstallments(): Set<Installment>;
 }
 
 export type LoanCreateInput = {

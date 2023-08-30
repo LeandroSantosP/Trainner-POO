@@ -5,7 +5,7 @@ const downPayment = 150000;
 const salary = 230000;
 const loanAmount = purchasePrice - downPayment;
 const loanRate = 1;
-const loanPeriod = 7;
+const loanPeriod = 12;
 
 function execute(loanType: string) {
     if (salary * 0.25 < loanAmount / loanPeriod) {
