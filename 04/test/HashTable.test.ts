@@ -24,14 +24,16 @@ test("Deve setar um item na hashTable utilizando o metade set e obtelo utilizand
   expect(hashTable.size).toBe(1);
 });
 
+// eu estou falando que essa função aqui recebe as seguintes propriedades;
+
 test("Deve setar um item na hashTable utilizando o metade set e remove-lo utilizando o metade remove.", function () {
   const hashTable = new HashTable(100);
-
   hashTable.set("name", "johnDoe");
   const itemAfter = hashTable.get("name");
   expect(hashTable.size).toBe(1);
   expect(itemAfter).toBe("johnDoe");
-  hashTable.remove("name");
+  const itemRemoved = hashTable.remove("name");
+  expect(itemRemoved).toBeTruthy();
   const itemBefore = hashTable.get("name");
   expect(itemBefore).toBeUndefined();
   expect(hashTable.size).toBe(0);

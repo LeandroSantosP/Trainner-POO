@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1693345034682" clover="3.2.0">
-  <project timestamp="1693345034682" name="All files">
+<coverage generated="1693345156118" clover="3.2.0">
+  <project timestamp="1693345156119" name="All files">
     <metrics statements="46" coveredstatements="43" conditionals="10" coveredconditionals="9" methods="7" coveredmethods="7" elements="63" coveredelements="59" complexity="0" loc="46" ncloc="46" packages="1" files="1" classes="1"/>
     <file name="HashTable.ts" path="C:\Users\Larisse\Documents\vs code\Trainner-POO\04\src\HashTable.ts">
       <metrics statements="46" coveredstatements="43" conditionals="10" coveredconditionals="9" methods="7" coveredmethods="7"/>
