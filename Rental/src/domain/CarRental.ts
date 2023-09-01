@@ -7,13 +7,13 @@ export class CarRental extends Rental {
     private constructor(
         id: string,
         rentalReturnDate: Date,
-        clientId: string,
+        readonly clientId: string,
         private readonly carPlate: string,
         private readonly carStatus: string,
         clock: Clock
     ) {
-        super(id, rentalReturnDate, clientId, clock);
-        if (carStatus === "ranted") throw new Error("Car already ranted!");
+        super(id, rentalReturnDate, clock);
+        if (carStatus !== "available") throw new Error("Car not available!");
         if (this.period.getInHors() < this.minRentalHors) {
             throw new Error("Rental Is required to be greater than 24 hors.");
         }
@@ -22,6 +22,10 @@ export class CarRental extends Rental {
     static create(input: Input) {
         const id = input.id ?? randomUUID();
         return new CarRental(id, input.rentalReturnDate, input.clientId, input.carPlate, input.carStatus, input.clock);
+    }
+
+    getPlate() {
+        return this.carPlate;
     }
 }
 

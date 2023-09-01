@@ -7,7 +7,7 @@
     "dev": "tsx watch src/main.ts",
     "build": "yarn && rimraf dist/ && tsc",
     "start": "yarn build && node dist/src/main.js",
-    "test": "jest"
+    "test": "jest --coverage=false"
   },
   "_moduleAliases": {
     "@/*": [

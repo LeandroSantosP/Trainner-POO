@@ -1,4 +1,6 @@
+import { Car } from "@/domain/Car";
+
 export interface CarRepository {
-    save(car: any): Promise<any>;
-    get(plate: string): Promise<any>;
+    save(car: Car): Promise<any>;
+    get(plate: string): Promise<Car>;
 }

@@ -7,6 +7,11 @@ export class Period {
     }
 
     getInHors() {
-        return ((this.startDate.getTime() - this.endDate.getTime()) / 1000) * 60 * 60;
+        const milissegundos = this.startDate.getTime() - this.endDate.getTime();
+        return milissegundos / (1000 * 60 * 60);
+    }
+
+    getInDays() {
+        return this.getInHors() / 24;
     }
 }
