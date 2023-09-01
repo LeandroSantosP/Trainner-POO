@@ -5,6 +5,7 @@ import { RentRepositoryMemory } from "@/infra/repository/RentRepositoryMemory";
 
 test("Deve ser possível alugar um carro", async function () {
     const clock = new FakeClock(new Date("2023-05-23T10:00:00"));
+    clock.setDate()
     const rentRepository = new RentRepositoryMemory();
     const carRepository = new CarRepositoryMemory();
     const carRent = new RentalService(clock, rentRepository, carRepository);
