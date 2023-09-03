@@ -1,27 +1,46 @@
 import { Clock } from "@/application/interfaces/Clock";
 import { Rental } from "./Rental";
 import { randomUUID } from "crypto";
+import { Price } from "./Price";
 
 export class CarRental extends Rental {
-    minRentalHors = 24;
+    private priceForHors = 10;
+    private price: Price;
     private constructor(
         id: string,
         rentalReturnDate: Date,
         readonly clientId: string,
         private readonly carPlate: string,
         private readonly carStatus: string,
+        readonly fereRentalInHors: number,
         clock: Clock
     ) {
         super(id, rentalReturnDate, clock);
+
         if (carStatus !== "available") throw new Error("Car not available!");
-        if (this.period.getInHors() < this.minRentalHors) {
+        const predictPrice = this.period.getInHors();
+        if (predictPrice < fereRentalInHors) {
             throw new Error("Rental Is required to be greater than 24 hors.");
         }
+        const inicialPrice = this.priceForHors * predictPrice;
+        this.price = new Price(inicialPrice);
     }
 
     static create(input: Input) {
         const id = input.id ?? randomUUID();
-        return new CarRental(id, input.rentalReturnDate, input.clientId, input.carPlate, input.carStatus, input.clock);
+        const fereRentalInHors = input.fereRentalInHors ?? 10;
+        return new CarRental(
+            id,
+            input.rentalReturnDate,
+            input.clientId,
+            input.carPlate,
+            input.carStatus,
+            fereRentalInHors,
+            input.clock
+        );
+    }
+    getPrice() {
+        return this.price.getValue();
     }
 
     getPlate() {
@@ -35,5 +54,6 @@ type Input = {
     clientId: string;
     carPlate: string;
     carStatus: string;
+    fereRentalInHors?: number;
     clock: Clock;
 };

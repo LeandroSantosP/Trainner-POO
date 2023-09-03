@@ -25,4 +25,5 @@ test("Deve ser possível alugar um carro", async function () {
     expect(output.rental_date_end).toBeUndefined();
     expect(output.rental_return_date).toEqual(new Date("2023-06-21T10:00:00"));
     expect(output.rentalPeriod).toBe(29);
+    expect(output.currentPrice).toBe(6960);
 });

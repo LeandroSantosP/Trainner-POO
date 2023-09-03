@@ -22,6 +22,8 @@ export class RentalService {
             rentalReturnDate: input.return_rental_date,
         });
 
+        // calculate payment
+
         await this.rentRepository.persiste(carRental);
     }
 
@@ -33,6 +35,7 @@ export class RentalService {
             rental_return_date: rental.rentalReturnDate,
             status: rental.getStatus(),
             rentalPeriod: rental.period.getInDays(),
+            currentPrice: rental.getPrice(),
         };
     }
 }

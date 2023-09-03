@@ -17,4 +17,5 @@ export type GetRentalOutput = {
     rental_date_end?: Date;
     rental_return_date: Date;
     rentalPeriod: number;
+    currentPrice: number;
 };
