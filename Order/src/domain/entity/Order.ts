@@ -7,14 +7,18 @@ export class Order {
     readonly id: string;
     private totalOrderPrice: number;
     readonly products: Product[];
+    private taxas: number;
     private status: string;
     private coupons: Coupon[];
+    private discount: number;
 
     constructor(readonly document: string, readonly date: Date, id?: string) {
         this.id = id ?? randomUUID();
         this.products = [];
         this.coupons = [];
         this.totalOrderPrice = 0;
+        this.taxas = 0;
+        this.discount = 0;
         this.status = "open";
     }
 
@@ -24,7 +28,7 @@ export class Order {
         this.coupons.push(coupon);
     }
 
-    addProduct(
+    addItem(
         productName: string,
         quantity: number,
         price: number,
@@ -42,32 +46,54 @@ export class Order {
 
     private calculatePrice() {
         let totalPrice = 0;
-
         for (const product of this.products) {
-            if (product instanceof ProductWithFare) {
-                const fare = product.calculateFare();
-                totalPrice += fare;
-            }
             totalPrice += product.getSubtotal();
         }
-
         this.totalOrderPrice = totalPrice;
+        return totalPrice;
     }
 
-    private calculateDiscount() {
-        let discount = 0;
-
-        for (const coupon of this.coupons) {
-            discount += coupon.getDiscount(this.totalOrderPrice);
+    getTaxes() {
+        let taxas = 0;
+        for (const product of this.products) {
+            if (product instanceof ProductWithFare) {
+                taxas += product.calculateFare();
+            }
         }
-        this.totalOrderPrice -= discount;
+        this.taxas = taxas;
+        return taxas;
     }
 
-    getPrice() {
-        this.calculatePrice();
-        this.calculateDiscount();
+    private calculateDiscount(subTotal: number): number {
+        let discount = 0;
+        for (const coupon of this.coupons) {
+            discount += coupon.getDiscount(subTotal);
+        }
+        this.discount = discount;
+        return discount;
+    }
 
-        return this.totalOrderPrice;
+    getTotalPrice() {
+        const subTotal = this.calculatePrice() + this.getTaxes();
+        const discount = this.calculateDiscount(subTotal);
+
+        return subTotal - discount;
+    }
+
+    changeStatus(newStatus: string) {
+        this.status = newStatus;
+    }
+
+    getCompleteInfos() {
+        const totalPrice = this.getTotalPrice();
+        const taxes = this.taxas;
+
+        const discount = this.discount;
+        return {
+            totalPrice,
+            taxes,
+            discount,
+        };
     }
 
     getStatus() {
