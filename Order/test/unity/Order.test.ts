@@ -27,3 +27,11 @@ test("Deve criar um pedido e calcular o total com um cupom de 10% e outro de 30%
 
     expect(order.getPrice()).toBe(1764);
 });
+
+test("Deve ser possível criar uma order com produtos que contem taxas", function () {
+    const order = new Order("92218475006", new Date("2023-10-22"));
+    const fare = 2; // 2%
+    order.addProduct("SmartPhone", 2, 1000, "Uma Descrição", true, fare);
+    const price = order.getPrice();
+    expect(price).toBe(2040);
+});

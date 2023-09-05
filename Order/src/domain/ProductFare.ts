@@ -1,3 +1,3 @@
 export interface ProductFare {
-    calculateFare(farePercentage?: number): number;
+    calculateFare(): number;
 }

@@ -1,11 +1,12 @@
 import { randomUUID } from "crypto";
 import { Product } from "./Product";
 import { Coupon } from "./Coupon";
+import { ProductWithFare } from "./ProductWithFare";
 
 export class Order {
-    private id: string;
+    readonly id: string;
     private totalOrderPrice: number;
-    products: Product[];
+    readonly products: Product[];
     private status: string;
     private coupons: Coupon[];
 
@@ -23,14 +24,30 @@ export class Order {
         this.coupons.push(coupon);
     }
 
-    addProduct(productName: string, quantity: number, price: number, description?: string) {
-        this.products.push(new Product(productName, quantity, price, description));
+    addProduct(
+        productName: string,
+        quantity: number,
+        price: number,
+        description?: string,
+        hasFare?: boolean,
+        fare?: number
+    ) {
+        let product = new Product(productName, quantity, price, description);
+        if (hasFare && !fare) throw new Error("Product with must has fare provide");
+        if (hasFare && fare) {
+            product = new ProductWithFare(productName, quantity, price, description, fare);
+        }
+        this.products.push(product);
     }
 
     private calculatePrice() {
         let totalPrice = 0;
 
         for (const product of this.products) {
+            if (product instanceof ProductWithFare) {
+                const fare = product.calculateFare();
+                totalPrice += fare;
+            }
             totalPrice += product.getSubtotal();
         }
 
