@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import { Product } from "./Product";
-import { format } from "path";
 import { Coupon } from "./Coupon";
 
 export class Order {
@@ -38,7 +37,7 @@ export class Order {
         this.totalOrderPrice = totalPrice;
     }
 
-    private calculateCouponsDiscount() {
+    private calculateDiscount() {
         let discount = 0;
 
         for (const coupon of this.coupons) {
@@ -49,7 +48,7 @@ export class Order {
 
     getPrice() {
         this.calculatePrice();
-        this.calculateCouponsDiscount();
+        this.calculateDiscount();
 
         return this.totalOrderPrice;
     }
