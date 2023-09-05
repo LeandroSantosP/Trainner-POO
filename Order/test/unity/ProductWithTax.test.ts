@@ -1,4 +1,4 @@
-import { ProductWithFare } from "@/domain/ProductWithFare";
+import { ProductWithFare } from "@/domain/entity/ProductWithFare";
 
 test("Deve ser passível criar um produto e calcular o imposto", function () {
     const product = new ProductWithFare("TV", 10, 1000, "TV .....");

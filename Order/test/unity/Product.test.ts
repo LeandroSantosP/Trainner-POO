@@ -1,4 +1,4 @@
-import { Product } from "@/domain/Product";
+import { Product } from "@/domain/entity/Product";
 
 test("Deve ser possível criar um produto", function () {
     const product = new Product("SmartPhone", 10, 2000, "Galaxy .....");
