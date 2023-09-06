@@ -13,14 +13,14 @@ export class ApplyOrderService {
         for (const item of input.items) {
             const product = await this.productDAO.get(item.productId);
 
-            order.addItem(
-                product.name,
-                item.quantity,
-                product.price,
-                product.description,
-                !!product.fare,
-                product.fare
-            );
+            order.addItem({
+                productName: product.name,
+                quantity: item.quantity,
+                price: product.price,
+                description: product.description,
+                hasFare: !!product.fare,
+                fare: product.fare,
+            });
         }
 
         await this.orderRepository.persiste(order);

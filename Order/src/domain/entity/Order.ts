@@ -1,12 +1,12 @@
 import { randomUUID } from "crypto";
-import { Product } from "./Product";
+import { OrderLine } from "./OrderLine";
 import { Coupon } from "./Coupon";
-import { ProductWithFare } from "./ProductWithFare";
+import { OrderLineWithFare } from "./ProductWithFare";
 
 export class Order {
     readonly id: string;
     private totalOrderPrice: number;
-    readonly products: Product[];
+    readonly products: OrderLine[];
     private taxas: number;
     private status: string;
     private coupons: Coupon[];
@@ -28,18 +28,16 @@ export class Order {
         this.coupons.push(coupon);
     }
 
-    addItem(
-        productName: string,
-        quantity: number,
-        price: number,
-        description?: string,
-        hasFare?: boolean,
-        fare?: number
-    ) {
-        let product = new Product(productName, quantity, price, description);
+    addItem(props: AddItemProps) {
+        const { price, productName, quantity, description, fare, hasFare, id } = props;
+        const productId = id ?? randomUUID();
+        let product = new OrderLine(productId, productName, quantity, price);
         if (hasFare && !fare) throw new Error("Product with must has fare provide");
         if (hasFare && fare) {
-            product = new ProductWithFare(productName, quantity, price, description, fare);
+            product = new OrderLineWithFare(productId, productName, quantity, price, fare);
+        }
+        if (this.products.some((product) => product.id === id)) {
+            throw new Error("Product already select.");
         }
         this.products.push(product);
     }
@@ -56,7 +54,7 @@ export class Order {
     getTaxes() {
         let taxas = 0;
         for (const product of this.products) {
-            if (product instanceof ProductWithFare) {
+            if (product instanceof OrderLineWithFare) {
                 taxas += product.calculateFare();
             }
         }
@@ -100,3 +98,13 @@ export class Order {
         return this.status;
     }
 }
+
+type AddItemProps = {
+    productName: string;
+    quantity: number;
+    price: number;
+    description?: string;
+    hasFare?: boolean;
+    fare?: number;
+    id?: string;
+};

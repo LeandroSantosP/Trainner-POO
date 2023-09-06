@@ -1,5 +1,5 @@
-export class Product {
-    constructor(readonly name: string, readonly quantity: number, readonly price: number, public description?: string) {
+export class OrderLine {
+    constructor(readonly id: string, readonly name: string, readonly quantity: number, readonly price: number) {
         if (quantity < 0) throw new Error("Product quantity must not be negative");
     }
 
@@ -8,20 +8,20 @@ export class Product {
     }
 }
 
-// One way for implement taxes in products entity
-abstract class ProductTax extends Product {
+// One way for implement taxes in OrderLines entity
+abstract class OrderLineTax extends OrderLine {
     abstract FARE: number;
-    constructor(name: string, quantity: number, price: number) {
-        super(name, quantity, price);
+    constructor(id: string, name: string, quantity: number, price: number) {
+        super(id, name, quantity, price);
     }
 
     abstract calculateFare(): { fare: number; priceWithFare: number };
 }
 
-class TV extends ProductTax {
+class TV extends OrderLineTax {
     FARE: number;
-    constructor(quantity: number, price: number) {
-        super("TV", quantity, price);
+    constructor(id: string, quantity: number, price: number) {
+        super(id, "TV", quantity, price);
         this.FARE = 10;
     }
 

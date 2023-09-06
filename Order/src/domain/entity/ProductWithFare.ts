@@ -1,12 +1,12 @@
-import { Product } from "./Product";
+import { OrderLine } from "./OrderLine";
 import { ProductFare } from "./ProductFare";
 
-export class ProductWithFare extends Product implements ProductFare {
+export class OrderLineWithFare extends OrderLine implements ProductFare {
     private fare: number;
     private MIN_FARE = 10;
 
-    constructor(name: string, quantity: number, price: number, description?: string, fare: number = 2) {
-        super(name, quantity, price, description);
+    constructor(id: string, name: string, quantity: number, price: number, fare: number = 2) {
+        super(id, name, quantity, price);
         this.fare = fare;
     }
     calculateFare(): number {
