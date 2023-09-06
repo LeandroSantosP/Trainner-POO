@@ -1,5 +1,5 @@
 export class Coupon {
-    constructor(private code: string, private percentage: number, readonly expire_date = new Date()) {}
+    constructor(private code: string, readonly percentage: number, readonly expire_date = new Date()) {}
 
     getDiscount(value: number) {
         const parserPercentage = this.percentage / 100;
@@ -9,7 +9,6 @@ export class Coupon {
 
     isValid(date: Date): boolean {
         const isVAlid = this.expire_date.getTime() > date.getTime();
-
         return !!isVAlid;
     }
 
