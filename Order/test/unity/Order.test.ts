@@ -28,8 +28,9 @@ test("Não deve ser possível adicionar coupon ja existente", function () {
 
 test("Deve criar um pedido e calcular o total com um cupom de 10% e outro de 30%.", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
-    order.addCoupon("VALE10", 10);
-    order.addCoupon("VALE40", 30);
+    const coupon_expire = new Date("2023-11-22");
+    order.addCoupon("VALE10", 10, coupon_expire);
+    order.addCoupon("VALE40", 30, coupon_expire);
 
     order.addItem({ productName: "SmartPhone", quantity: 4, price: 100, description: "Uma Descrição" });
     order.addItem({ productName: "TV", quantity: 1, price: 1340, description: "Uma Descrição" });
@@ -55,7 +56,9 @@ test("Deve ser possível criar uma order com produtos que contem taxas", functio
 
 test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e mudar o status para: conclude", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
-    order.addCoupon("VALE10", 10);
+    const coupon_expire = new Date("2023-11-22");
+
+    order.addCoupon("VALE10", 10, coupon_expire);
 
     order.addItem({
         productName: "SmartPhone",

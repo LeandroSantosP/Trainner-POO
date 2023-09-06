@@ -22,8 +22,8 @@ export class Order {
         this.status = "open";
     }
 
-    addCoupon(couponCode: string, percentage: number) {
-        const coupon = new Coupon(couponCode, percentage);
+    addCoupon(couponCode: string, percentage: number, expire_date: Date = new Date()) {
+        const coupon = new Coupon(couponCode, percentage, expire_date);
         if (this.coupons.some((coupon) => coupon.getCode() === couponCode)) throw new Error("Coupon already Applied");
         this.coupons.push(coupon);
     }
@@ -65,7 +65,9 @@ export class Order {
     private calculateDiscount(subTotal: number): number {
         let discount = 0;
         for (const coupon of this.coupons) {
-            discount += coupon.getDiscount(subTotal);
+            if (coupon.isValid(this.date)) {
+                discount += coupon.getDiscount(subTotal);
+            }
         }
         this.discount = discount;
         return discount;
