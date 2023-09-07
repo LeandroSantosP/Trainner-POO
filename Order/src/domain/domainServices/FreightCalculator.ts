@@ -1,8 +1,8 @@
 export class FreightCalculator {
-    static execute(input: Input): Output {
+    static execute(products: Input): Output {
         let freight = 0;
-        for (const item of input) {
-            const volume = (item.width / 100) * (item.height / 100) * (input.length / 100);
+        for (const item of products) {
+            const volume = (item.width / 100) * (item.height / 100) * (item.length / 100);
             const density = item.weight / volume;
             freight = 1000 * volume * (density / 100);
         }

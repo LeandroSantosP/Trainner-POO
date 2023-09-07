@@ -5,8 +5,8 @@ export class OrderLineWithFare extends OrderLine implements ProductFare {
     private fare: number;
     private MIN_FARE = 10;
 
-    constructor(id: string, name: string, quantity: number, price: number, fare: number = 2) {
-        super(id, name, quantity, price);
+    constructor(id: string, quantity: number, price: number, fare: number = 2) {
+        super(id, quantity, price);
         this.fare = fare;
     }
     calculateFare(): number {

@@ -28,11 +28,9 @@ export class OrderService {
         for (const item of input.items) {
             const product = await this.productRepository.getById(item.productId);
             productDimensions.push(product.dimensions);
-            order.addItem({
-                productName: product.name,
+            order.addLine({
                 quantity: item.quantity,
                 price: product.price,
-                description: product.description,
                 hasFare: !!product.fare,
                 fare: product.fare,
             });

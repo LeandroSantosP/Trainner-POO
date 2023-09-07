@@ -1,9 +1,9 @@
 export class OrderLine {
-    constructor(readonly id: string, readonly name: string, readonly quantity: number, readonly price: number) {
+    constructor(readonly id: string, readonly quantity: number, readonly price: number) {
         if (quantity < 0) throw new Error("Product quantity must not be negative");
     }
 
-    getSubtotal() {
+    getTotal() {
         return this.price * this.quantity;
     }
 }
@@ -12,7 +12,7 @@ export class OrderLine {
 abstract class OrderLineTax extends OrderLine {
     abstract FARE: number;
     constructor(id: string, name: string, quantity: number, price: number) {
-        super(id, name, quantity, price);
+        super(id, quantity, price);
     }
 
     abstract calculateFare(): { fare: number; priceWithFare: number };

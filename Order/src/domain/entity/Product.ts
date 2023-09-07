@@ -10,6 +10,7 @@ export class Product {
         readonly dimensions: Dimensions,
         readonly fare?: number
     ) {}
+
     static create(input: ProductInput) {
         const { id, name, price, description, width, height, length, fare, weight } = input;
         const dimensions = new Dimensions(width, height, length, weight);

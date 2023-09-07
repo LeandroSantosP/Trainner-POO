@@ -3,9 +3,9 @@ import { Order } from "@/domain/entity/Order";
 test("Deve criar um pedido e calcular o total.", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
 
-    order.addItem({ productName: "SmartPhone", quantity: 4, price: 100, description: "Uma Descrição" });
-    order.addItem({ productName: "TV", quantity: 1, price: 1340, description: "Uma Descrição" });
-    order.addItem({ productName: "PC", quantity: 2, price: 600, description: "Uma Descrição" });
+    order.addLine({ quantity: 4, price: 100 });
+    order.addLine({ quantity: 1, price: 1340 });
+    order.addLine({ quantity: 2, price: 600 });
     expect(order.getTotalPrice()).toBe(2940);
     expect(order.getStatus()).toBe("open");
 });
@@ -13,11 +13,9 @@ test("Deve criar um pedido e calcular o total.", function () {
 test("Não deve ser possível adicionar um item repetido no pedido.", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
 
-    order.addItem({ productName: "SmartPhone", quantity: 4, price: 100, description: "Uma Descrição", id: "1234" });
+    order.addLine({ quantity: 4, price: 100, id: "1234" });
 
-    expect(() =>
-        order.addItem({ productName: "SmartPhone", quantity: 4, price: 100, description: "Uma Descrição", id: "1234" })
-    ).toThrow(new Error("Product already select."));
+    expect(() => order.addLine({ quantity: 4, price: 100, id: "1234" })).toThrow(new Error("Product already select."));
 });
 
 test("Não deve ser possível adicionar coupon ja existente", function () {
@@ -32,9 +30,9 @@ test("Deve criar um pedido e calcular o total com um cupom de 10% e outro de 30%
     order.addCoupon("VALE10", 10, coupon_expire);
     order.addCoupon("VALE40", 30, coupon_expire);
 
-    order.addItem({ productName: "SmartPhone", quantity: 4, price: 100, description: "Uma Descrição" });
-    order.addItem({ productName: "TV", quantity: 1, price: 1340, description: "Uma Descrição" });
-    order.addItem({ productName: "PC", quantity: 2, price: 600, description: "Uma Descrição" });
+    order.addLine({ quantity: 4, price: 100 });
+    order.addLine({ quantity: 1, price: 1340 });
+    order.addLine({ quantity: 2, price: 600 });
 
     expect(order.getTotalPrice()).toBe(1764);
 });
@@ -43,11 +41,9 @@ test("Deve ser possível criar uma order com produtos que contem taxas e total d
     const order = new Order("92218475006", new Date("2023-10-22"));
     order.setFreight(100);
     const fare = 2; // 2%
-    order.addItem({
-        productName: "SmartPhone",
+    order.addLine({
         quantity: 2,
         price: 1000,
-        description: "Uma Descrição",
         hasFare: true,
         fare: fare,
     });
@@ -61,11 +57,9 @@ test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e 
 
     order.addCoupon("VALE10", 10, coupon_expire);
 
-    order.addItem({
-        productName: "SmartPhone",
+    order.addLine({
         quantity: 2,
         price: 1000,
-        description: "Uma Descrição",
         hasFare: true,
         fare: 2,
     });
@@ -79,11 +73,9 @@ test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e 
 
 test("Deve ser possível calcular o valor do frete de um produto", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
-    order.addItem({
-        productName: "SmartPhone",
+    order.addLine({
         quantity: 4,
         price: 100,
-        description: "Uma Descrição",
         hasFare: true,
         fare: 20,
     });

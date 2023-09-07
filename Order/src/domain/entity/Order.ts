@@ -28,16 +28,14 @@ export class Order {
         if (this.coupons.some((coupon) => coupon.getCode() === couponCode)) throw new Error("Coupon already Applied");
         this.coupons.push(coupon);
     }
-    setFreight(freight: number) {
-        this.freight = freight;
-    }
-    addItem(props: AddItemProps) {
-        const { price, productName, quantity, description, fare, hasFare, id } = props;
+
+    addLine(props: AddLineProps) {
+        const { price, quantity, fare, hasFare, id } = props;
         const productId = id ?? randomUUID();
-        let product = new OrderLine(productId, productName, quantity, price);
+        let product = new OrderLine(productId, quantity, price);
         if (hasFare && !fare) throw new Error("Product with must has fare provide");
         if (hasFare && fare) {
-            product = new OrderLineWithFare(productId, productName, quantity, price, fare);
+            product = new OrderLineWithFare(productId, quantity, price, fare);
         }
         if (this.products.some((product) => product.id === id)) {
             throw new Error("Product already select.");
@@ -48,7 +46,7 @@ export class Order {
     private calculatePrice() {
         let totalPrice = 0;
         for (const product of this.products) {
-            totalPrice += product.getSubtotal();
+            totalPrice += product.getTotal();
         }
         this.totalOrderPrice = totalPrice;
         return totalPrice;
@@ -74,6 +72,9 @@ export class Order {
 
     changeStatus(newStatus: string) {
         this.status = newStatus;
+    }
+    setFreight(freight: number) {
+        this.freight = freight;
     }
     getTaxes() {
         let taxas = 0;
@@ -104,11 +105,9 @@ export class Order {
     }
 }
 
-type AddItemProps = {
-    productName: string;
+type AddLineProps = {
     quantity: number;
     price: number;
-    description?: string;
     hasFare?: boolean;
     fare?: number;
     id?: string;
