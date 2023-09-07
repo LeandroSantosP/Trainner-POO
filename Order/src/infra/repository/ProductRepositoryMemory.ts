@@ -35,6 +35,15 @@ export class ProductRepositoryMemory implements ProductRepository {
             width: 30,
         }),
     ];
+
+    static instance: ProductRepositoryMemory;
+
+    static getInstance() {
+        if (!ProductRepositoryMemory.instance) {
+            ProductRepositoryMemory.instance = new ProductRepositoryMemory();
+        }
+        return ProductRepositoryMemory.instance;
+    }
     async getById(product_id: string): Promise<Product> {
         const product = this.products.find((prod) => prod.id === product_id);
         if (!product) throw new Error("Product not found");

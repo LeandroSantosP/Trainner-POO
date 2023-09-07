@@ -4,16 +4,18 @@ import { Clock } from "../interfaces/Clock";
 import { CouponRepository } from "../repository/CouponRepository";
 import { ProductRepository } from "../repository/ProductRepository";
 import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
-import { Product } from "@/domain/entity/Product";
 import { Dimensions } from "@/domain/entity/Dimensions";
+import { OrderServiceFactory } from "../factory/OrderServiceFactory";
 
 export class OrderService {
-    constructor(
-        readonly clock: Clock,
-        readonly orderRepository: OrderRepository,
-        readonly couponRepository: CouponRepository,
-        readonly productRepository: ProductRepository
-    ) {}
+    readonly orderRepository: OrderRepository;
+    readonly couponRepository: CouponRepository;
+    readonly productRepository: ProductRepository;
+    constructor(orderServiceFactory: OrderServiceFactory, readonly clock: Clock) {
+        this.orderRepository = orderServiceFactory.orderRepository();
+        this.couponRepository = orderServiceFactory.couponRepository();
+        this.productRepository = orderServiceFactory.productRepository();
+    }
 
     async applyOrder(input: ApplyOrderInput): Promise<void> {
         const currentDate = this.clock.getCurrentDate();

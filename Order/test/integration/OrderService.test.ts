@@ -1,14 +1,9 @@
 import { OrderService } from "@/application";
+import { OrderServiceFactory } from "@/application/factory/OrderServiceFactory";
 import { Clock } from "@/application/interfaces/Clock";
-import { ProductDAO } from "@/application/interfaces/ProductDAO";
-import { CouponRepository } from "@/application/repository/CouponRepository";
-import { ProductRepository } from "@/application/repository/ProductRepository";
 import { FakeClock } from "@/domain/domainServices/FakeClock";
 import { Coupon } from "@/domain/entity/Coupon";
-import { ProductDAOMemory } from "@/infra/DAO/ProductDAOMemory";
-import { CouponRepositoryMemory } from "@/infra/repository/CouponRepositoryMemory";
-import { OrderRepositoryMemory } from "@/infra/repository/OrderRepositoryMemory";
-import { ProductRepositoryMemory } from "@/infra/repository/ProductRepositoryMemory";
+import { OrderServiceFactoryMemory } from "@/infra/factory/OrderServiceFactoryMemory";
 
 let applyOrderInput = {
     document: "81307907008",
@@ -29,20 +24,14 @@ let applyOrderInput = {
 };
 
 let clock: Clock;
-let orderRepository: OrderRepositoryMemory;
-let couponRepository: CouponRepository;
-let productRepository: ProductRepository;
-let productDAO: ProductDAO;
 let orderService: OrderService;
+let orderServiceFactory: OrderServiceFactory;
 
 beforeEach(() => {
     clock = new FakeClock();
     clock.setCurrentDate(new Date("2023-10-10"));
-    orderRepository = new OrderRepositoryMemory();
-    productDAO = new ProductDAOMemory();
-    productRepository = new ProductRepositoryMemory();
-    couponRepository = new CouponRepositoryMemory();
-    orderService = new OrderService(clock, orderRepository, couponRepository, productRepository);
+    orderServiceFactory = new OrderServiceFactoryMemory();
+    orderService = new OrderService(orderServiceFactory, clock);
 });
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
     await orderService.applyOrder(applyOrderInput);
@@ -57,7 +46,7 @@ test("Deve ser possível solicitar um pedido com 3 items", async function () {
 
 test("Deve ser possível solicitar um pedido com 2 items e aplicar um cupom de desconto", async function () {
     clock.setCurrentDate(new Date("2023-10-10"));
-    await couponRepository.persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
+    await orderServiceFactory.couponRepository().persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
     await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
     const output = await orderService.getOrder("81307907008");
     expect(output.discount).toBe(1432);

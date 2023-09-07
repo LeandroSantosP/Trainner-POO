@@ -4,6 +4,15 @@ import { Order } from "@/domain/entity/Order";
 export class OrderRepositoryMemory implements OrderRepository {
     orders: Map<string, Order> = new Map();
 
+    static instance: OrderRepositoryMemory;
+
+    static getInstance() {
+        if (!OrderRepositoryMemory.instance) {
+            OrderRepositoryMemory.instance = new OrderRepositoryMemory();
+        }
+        return OrderRepositoryMemory.instance;
+    }
+
     async persiste(order: Order): Promise<void> {
         this.orders.set(order.document, order);
     }
