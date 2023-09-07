@@ -11,6 +11,7 @@ export class Order {
     private status: string;
     private coupons: Coupon[];
     private discount: number;
+    private freight: number = 0;
 
     constructor(readonly document: string, readonly date: Date, id?: string) {
         this.id = id ?? randomUUID();
@@ -27,7 +28,9 @@ export class Order {
         if (this.coupons.some((coupon) => coupon.getCode() === couponCode)) throw new Error("Coupon already Applied");
         this.coupons.push(coupon);
     }
-
+    setFreight(freight: number) {
+        this.freight = freight;
+    }
     addItem(props: AddItemProps) {
         const { price, productName, quantity, description, fare, hasFare, id } = props;
         const productId = id ?? randomUUID();
@@ -63,7 +66,8 @@ export class Order {
     }
 
     getTotalPrice() {
-        const subTotal = this.calculatePrice() + this.getTaxes();
+        const freight = this.freight;
+        const subTotal = this.calculatePrice() + this.getTaxes() + freight;
         const discount = this.calculateDiscount(subTotal);
         return subTotal - discount;
     }
@@ -86,10 +90,12 @@ export class Order {
         const totalPrice = this.getTotalPrice();
         const taxes = this.taxas;
         const discount = this.discount;
+        const freight = this.freight;
         return {
             totalPrice,
             taxes,
             discount,
+            freight,
         };
     }
 

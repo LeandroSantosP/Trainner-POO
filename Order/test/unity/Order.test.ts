@@ -39,8 +39,9 @@ test("Deve criar um pedido e calcular o total com um cupom de 10% e outro de 30%
     expect(order.getTotalPrice()).toBe(1764);
 });
 
-test("Deve ser possível criar uma order com produtos que contem taxas", function () {
+test("Deve ser possível criar uma order com produtos que contem taxas e total de frete", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
+    order.setFreight(100);
     const fare = 2; // 2%
     order.addItem({
         productName: "SmartPhone",
@@ -51,7 +52,7 @@ test("Deve ser possível criar uma order com produtos que contem taxas", functio
         fare: fare,
     });
     const price = order.getTotalPrice();
-    expect(price).toBe(2040);
+    expect(price).toBe(2140);
 });
 
 test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e mudar o status para: conclude", function () {

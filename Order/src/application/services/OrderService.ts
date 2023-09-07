@@ -1,15 +1,18 @@
 import { Order } from "@/domain/entity/Order";
 import { OrderRepository } from "../repository/OrderRepository";
 import { Clock } from "../interfaces/Clock";
-import { ProductDAO } from "../interfaces/ProductDAO";
 import { CouponRepository } from "../repository/CouponRepository";
+import { ProductRepository } from "../repository/ProductRepository";
+import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
+import { Product } from "@/domain/entity/Product";
+import { Dimensions } from "@/domain/entity/Dimensions";
 
 export class OrderService {
     constructor(
         readonly clock: Clock,
         readonly orderRepository: OrderRepository,
         readonly couponRepository: CouponRepository,
-        readonly productDAO: ProductDAO
+        readonly productRepository: ProductRepository
     ) {}
 
     async applyOrder(input: ApplyOrderInput): Promise<void> {
@@ -19,8 +22,10 @@ export class OrderService {
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
         }
+        const productDimensions: Dimensions[] = [];
         for (const item of input.items) {
-            const product = await this.productDAO.get(item.productId);
+            const product = await this.productRepository.getById(item.productId);
+            productDimensions.push(product.dimensions);
             order.addItem({
                 productName: product.name,
                 quantity: item.quantity,
@@ -30,6 +35,8 @@ export class OrderService {
                 fare: product.fare,
             });
         }
+        const { freight } = FreightCalculator.execute(productDimensions);
+        order.setFreight(freight);
         await this.orderRepository.persiste(order);
         // Order required
     }

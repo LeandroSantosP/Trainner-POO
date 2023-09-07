@@ -1,13 +1,13 @@
 export class FreightCalculator {
     static execute(input: Input): Output {
-        Object.entries(input).some(([key, value]) => {
-            if (value < 0) throw new Error(`'${key.toUpperCase()}' must be positive value`);
-        });
-        const volume = (input.width / 100) * (input.height / 100) * (input.length / 100);
-        const density = input.weight / volume;
-        const freight = 1000 * volume * (density / 100);
+        let freight = 0;
+        for (const item of input) {
+            const volume = (item.width / 100) * (item.height / 100) * (input.length / 100);
+            const density = item.weight / volume;
+            freight = 1000 * volume * (density / 100);
+        }
         return {
-            freight,
+            freight: Math.round(freight),
         };
     }
 }
@@ -17,7 +17,7 @@ type Input = {
     height: number;
     length: number;
     weight: number;
-};
+}[];
 
 type Output = {
     freight: number;

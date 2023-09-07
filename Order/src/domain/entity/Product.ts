@@ -1,25 +1,19 @@
 import { randomUUID } from "crypto";
-
-class Dimensions {
-    constructor(readonly width: number, readonly height: number, readonly length: number, readonly weight: number) {
-        Object.values(this).some((value) => {
-            if (value < 0) throw new Error("Invalid Dimension");
-        });
-    }
-}
+import { Dimensions } from "./Dimensions";
 
 export class Product {
     private constructor(
         readonly id: string,
         readonly name: string,
-        private price: number,
+        readonly price: number,
         readonly description: string,
-        readonly dimensions: Dimensions
+        readonly dimensions: Dimensions,
+        readonly fare?: number
     ) {}
     static create(input: ProductInput) {
-        const { id, name, price, description, width, height, length, weight } = input;
+        const { id, name, price, description, width, height, length, fare, weight } = input;
         const dimensions = new Dimensions(width, height, length, weight);
-        return new Product(id ?? randomUUID(), name, price, description, dimensions);
+        return new Product(id ?? randomUUID(), name, price, description, dimensions, fare);
     }
 
     getPrice() {
@@ -30,6 +24,7 @@ export class Product {
 type ProductInput = {
     id?: string;
     price: number;
+    fare?: number;
     name: string;
     description: string;
     width: number;
