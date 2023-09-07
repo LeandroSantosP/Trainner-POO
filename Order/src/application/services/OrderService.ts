@@ -4,7 +4,7 @@ import { Clock } from "../interfaces/Clock";
 import { ProductDAO } from "../interfaces/ProductDAO";
 import { CouponRepository } from "../repository/CouponRepository";
 
-export class ApplyOrderService {
+export class OrderService {
     constructor(
         readonly clock: Clock,
         readonly orderRepository: OrderRepository,
@@ -16,7 +16,6 @@ export class ApplyOrderService {
         const currentDate = this.clock.getCurrentDate();
         const order = new Order(input.document, currentDate);
         const coupon = input.coupon ? await this.couponRepository.getByCode(input.coupon) : null;
-
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
         }
@@ -31,16 +30,13 @@ export class ApplyOrderService {
                 fare: product.fare,
             });
         }
-
         await this.orderRepository.persiste(order);
         // Order required
     }
 
     async getOrder(document: string): Promise<GetOrderOutPut> {
         const order = await this.orderRepository.get(document);
-
         const infos = order.getCompleteInfos();
-
         const output: GetOrderOutPut = {
             ...infos,
             document: order.document,

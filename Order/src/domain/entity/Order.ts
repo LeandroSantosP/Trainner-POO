@@ -51,17 +51,6 @@ export class Order {
         return totalPrice;
     }
 
-    getTaxes() {
-        let taxas = 0;
-        for (const product of this.products) {
-            if (product instanceof OrderLineWithFare) {
-                taxas += product.calculateFare();
-            }
-        }
-        this.taxas = taxas;
-        return taxas;
-    }
-
     private calculateDiscount(subTotal: number): number {
         let discount = 0;
         for (const coupon of this.coupons) {
@@ -76,18 +65,26 @@ export class Order {
     getTotalPrice() {
         const subTotal = this.calculatePrice() + this.getTaxes();
         const discount = this.calculateDiscount(subTotal);
-
         return subTotal - discount;
     }
 
     changeStatus(newStatus: string) {
         this.status = newStatus;
     }
+    getTaxes() {
+        let taxas = 0;
+        for (const product of this.products) {
+            if (product instanceof OrderLineWithFare) {
+                taxas += product.calculateFare();
+            }
+        }
+        this.taxas = taxas;
+        return taxas;
+    }
 
     getCompleteInfos() {
         const totalPrice = this.getTotalPrice();
         const taxes = this.taxas;
-
         const discount = this.discount;
         return {
             totalPrice,
