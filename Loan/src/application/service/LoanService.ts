@@ -2,6 +2,8 @@ import { LoanFactory } from "@/domain/factory/LoanFactory";
 import { LoanRepository } from "../repository/LoanRepository";
 import { RepositoryAndQueueFactory } from "../factory/RepositoryAndQueueFactory";
 import { InstallmentRepository } from "../repository/InstallmentRepository";
+import { Queue } from "../interfaces/Queue";
+import { MailerEvent } from "@/infra/event/MailerEvent";
 import {
     GetLoanInput,
     GetLoanOutput,
@@ -9,8 +11,6 @@ import {
     SubmitLoanInput,
     SimulateLoanOutput,
 } from "./LoanServiceTypes";
-import { Queue } from "../interfaces/Queue";
-import { MailerEvent } from "@/infra/event/MailerEvent";
 
 export class LoanService {
     loanRepository: LoanRepository;

@@ -1,8 +1,13 @@
 import { Clock } from "@/application/interfaces/Clock";
 
 export class FakeClock implements Clock {
-    constructor(readonly date: Date) {}
+    date: Date = new Date();
+    constructor() {}
     getCurrentTime(): Date {
         return this.date;
+    }
+
+    setCurrentDate(date: Date) {
+        this.date = date;
     }
 }

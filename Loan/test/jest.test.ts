@@ -39,5 +39,4 @@ function GetPercentage(percentage: number) {
 
 test("test", function () {
     const res = GetPercentage(0.7);
-    console.log(res);
 });
