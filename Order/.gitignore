@@ -15,6 +15,7 @@ lerna-debug.log*
 /*.lock
 # OS
 .DS_Store
+.env
 
 # IDE - VSCode
 .vscode/*
