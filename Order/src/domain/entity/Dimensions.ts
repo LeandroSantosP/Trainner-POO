@@ -4,4 +4,13 @@ export class Dimensions {
             if (value < 0) throw new Error("Invalid Dimension, must not be negative");
         });
     }
+
+    getVolume() {
+        return (this.width / 100) * (this.height / 100) * (this.length / 100);
+    }
+
+    getDensity() {
+        const density = this.weight / this.getVolume();
+        return parseFloat(density.toFixed(2));
+    }
 }

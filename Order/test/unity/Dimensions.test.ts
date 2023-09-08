@@ -5,6 +5,12 @@ test("Deve ser possível criar uma nova dimensão", function () {
     expect(dim).toBeDefined();
 });
 
+test("Deve ser possível calcular a densidade e o volume baseado nas dimensões", function () {
+    const dim = new Dimensions(100, 70, 50, 10);
+    expect(dim.getVolume()).toBe(0.35);
+    expect(dim.getDensity()).toBe(28.57);
+});
+
 const invalidInputs = [
     [
         {

@@ -24,10 +24,14 @@ export class OrderService {
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
         }
-        const productDimensions: Dimensions[] = [];
+        const productDimensions: { density: number; volume: number; weight: number }[] = [];
         for (const item of input.items) {
             const product = await this.productRepository.getById(item.productId);
-            productDimensions.push(product.dimensions);
+            productDimensions.push({
+                density: product.dimensions.getDensity(),
+                volume: product.dimensions.getVolume(),
+                weight: product.dimensions.weight,
+            });
             order.addLine({
                 quantity: item.quantity,
                 price: product.price,
