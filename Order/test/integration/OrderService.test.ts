@@ -36,7 +36,6 @@ beforeEach(() => {
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
     await orderService.applyOrder(applyOrderInput);
     clock.setCurrentDate(new Date("2023-10-10"));
-
     const output = await orderService.getOrder("81307907008");
     expect(output.document).toBe("81307907008");
     expect(output.orderStatus).toBe("open");
