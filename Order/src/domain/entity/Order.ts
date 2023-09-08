@@ -12,8 +12,9 @@ export class Order {
     private coupons: Coupon[];
     private discount: number;
     private freight: number = 0;
+    private code: string = randomUUID();
 
-    constructor(readonly document: string, readonly date: Date, id?: string) {
+    constructor(readonly document: string, readonly date: Date, id?: string, readonly sequence: number = 1) {
         this.id = id ?? randomUUID();
         this.products = [];
         this.coupons = [];
@@ -21,6 +22,18 @@ export class Order {
         this.taxas = 0;
         this.discount = 0;
         this.status = "open";
+    }
+
+    static restore(input: RestoreInput): Order {
+        const { document, discount, freight, id, price, status, taxes, orderDate, code } = input;
+        const order = new Order(document, orderDate, id);
+        order.changeStatus(status);
+        order.totalOrderPrice = price;
+        order.freight = freight;
+        order.discount = discount;
+        order.taxas = taxes;
+        order.code = code;
+        return order;
     }
 
     addCoupon(couponCode: string, percentage: number, expire_date: Date = new Date()) {
@@ -67,7 +80,9 @@ export class Order {
         const freight = this.freight;
         const subTotal = this.calculatePrice() + this.getTaxes() + freight;
         const discount = this.calculateDiscount(subTotal);
-        return subTotal - discount;
+        const total = subTotal - discount;
+        this.totalOrderPrice = total;
+        return total;
     }
 
     changeStatus(newStatus: string) {
@@ -87,13 +102,16 @@ export class Order {
         return taxas;
     }
 
+    getCode() {
+        return this.code;
+    }
+
     getCompleteInfos() {
-        const totalPrice = this.getTotalPrice();
         const taxes = this.taxas;
         const discount = this.discount;
         const freight = this.freight;
         return {
-            totalPrice,
+            totalPrice: this.totalOrderPrice,
             taxes,
             discount,
             freight,
@@ -105,7 +123,19 @@ export class Order {
     }
 }
 
-type AddLineProps = {
+type RestoreInput = {
+    id: string;
+    document: string;
+    price: number;
+    freight: number;
+    discount: number;
+    taxes: number;
+    orderDate: Date;
+    code: string;
+    status: string;
+};
+
+export type AddLineProps = {
     quantity: number;
     price: number;
     hasFare?: boolean;

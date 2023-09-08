@@ -6,13 +6,14 @@ import { OrderRepositoryMemory } from "../repository/OrderRepositoryMemory";
 import { CouponRepositoryMemory } from "../repository/CouponRepositoryMemory";
 import { ProductRepositoryMemory } from "../repository/ProductRepositoryMemory";
 import { CouponRepositoryKnex } from "../repository/CouponRepositoryKnex";
+import { OrderRepositoryKnex } from "../repository/OrderRepositoryKnex";
 
 export class OrderServiceFactoryMemory implements OrderServiceFactory {
     orderRepository(): OrderRepository {
-        return OrderRepositoryMemory.getInstance();
+        return new OrderRepositoryKnex();
     }
     couponRepository(): CouponRepository {
-        return CouponRepositoryMemory.getInstance();
+        return new CouponRepositoryKnex();
     }
     productRepository(): ProductRepository {
         return ProductRepositoryMemory.getInstance();

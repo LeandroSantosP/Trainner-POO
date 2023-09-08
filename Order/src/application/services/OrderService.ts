@@ -4,7 +4,6 @@ import { Clock } from "../interfaces/Clock";
 import { CouponRepository } from "../repository/CouponRepository";
 import { ProductRepository } from "../repository/ProductRepository";
 import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
-import { Dimensions } from "@/domain/entity/Dimensions";
 import { OrderServiceFactory } from "../factory/OrderServiceFactory";
 
 export class OrderService {
@@ -47,7 +46,8 @@ export class OrderService {
 
     async getOrder(document: string): Promise<GetOrderOutPut> {
         const order = await this.orderRepository.get(document);
-        const infos = order.getCompleteInfos();
+        const { ...infos } = order.getCompleteInfos();
+
         const output: GetOrderOutPut = {
             ...infos,
             document: order.document,
