@@ -52,4 +52,5 @@ export class ProductRepositoryMemory implements ProductRepository {
     async persiste(product: Product): Promise<void> {
         this.products.push(product);
     }
+    async close(): Promise<void> {}
 }

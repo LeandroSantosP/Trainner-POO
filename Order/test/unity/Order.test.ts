@@ -63,9 +63,10 @@ test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e 
         hasFare: true,
         fare: 2,
     });
+    const total = order.getTotalPrice();
     const output = order.getCompleteInfos();
     order.changeStatus("conclude");
-    expect(output.totalPrice).toBe(1836);
+    expect(total).toBe(1836);
     expect(output.discount).toBe(204);
     expect(output.taxes).toBe(40);
     expect(order.getStatus()).toBe("conclude");

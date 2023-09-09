@@ -19,4 +19,5 @@ export class CouponRepositoryMemory implements CouponRepository {
     async persiste(coupon: Coupon): Promise<void> {
         this.coupons.set(coupon.getCode(), coupon);
     }
+    async close(): Promise<void> {}
 }

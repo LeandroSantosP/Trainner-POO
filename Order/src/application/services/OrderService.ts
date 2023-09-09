@@ -4,7 +4,6 @@ import { Clock } from "../interfaces/Clock";
 import { CouponRepository } from "../repository/CouponRepository";
 import { ProductRepository } from "../repository/ProductRepository";
 import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
-import { Dimensions } from "@/domain/entity/Dimensions";
 import { OrderServiceFactory } from "../factory/OrderServiceFactory";
 
 export class OrderService {
@@ -24,10 +23,14 @@ export class OrderService {
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
         }
-        const productDimensions: Dimensions[] = [];
+        const productDimensions: { density: number; volume: number; weight: number }[] = [];
         for (const item of input.items) {
             const product = await this.productRepository.getById(item.productId);
-            productDimensions.push(product.dimensions);
+            productDimensions.push({
+                density: product.dimensions.getDensity(),
+                volume: product.dimensions.getVolume(),
+                weight: product.dimensions.weight,
+            });
             order.addLine({
                 quantity: item.quantity,
                 price: product.price,
@@ -43,7 +46,8 @@ export class OrderService {
 
     async getOrder(document: string): Promise<GetOrderOutPut> {
         const order = await this.orderRepository.get(document);
-        const infos = order.getCompleteInfos();
+        const { ...infos } = order.getCompleteInfos();
+
         const output: GetOrderOutPut = {
             ...infos,
             document: order.document,

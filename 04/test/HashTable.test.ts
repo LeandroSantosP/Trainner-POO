@@ -1,4 +1,3 @@
-import exp from "constants";
 import { HashTable } from "../src/HashTable";
 
 test("Deve criar uma hash a partir de uma key!", function () {
