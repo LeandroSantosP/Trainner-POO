@@ -5,26 +5,24 @@ import { OrderLineWithFare } from "./ProductWithFare";
 
 export class Order {
     readonly id: string;
-    private totalOrderPrice: number;
-    readonly products: OrderLine[];
-    private taxas: number;
+    readonly orderLine: OrderLine[];
     private status: string;
     private coupons: Coupon[];
-    private discount: number;
+    private taxas: number = 0;
+    private totalOrderPrice: number = 0;
+    private discount: number = 0;
     private freight: number = 0;
 
     constructor(readonly document: string, readonly date: Date, id?: string) {
         this.id = id ?? randomUUID();
-        this.products = [];
+        this.orderLine = [];
         this.coupons = [];
-        this.totalOrderPrice = 0;
-        this.taxas = 0;
-        this.discount = 0;
         this.status = "open";
     }
 
     addCoupon(couponCode: string, percentage: number, expire_date: Date = new Date()) {
         const coupon = new Coupon(couponCode, percentage, expire_date);
+        if (!coupon.isValid(this.date)) return;
         if (this.coupons.some((coupon) => coupon.getCode() === couponCode)) throw new Error("Coupon already Applied");
         this.coupons.push(coupon);
     }
@@ -37,15 +35,15 @@ export class Order {
         if (hasFare && fare) {
             product = new OrderLineWithFare(productId, quantity, price, fare);
         }
-        if (this.products.some((product) => product.id === id)) {
+        if (this.orderLine.some((product) => product.id === id)) {
             throw new Error("Product already select.");
         }
-        this.products.push(product);
+        this.orderLine.push(product);
     }
 
     private calculatePrice() {
         let totalPrice = 0;
-        for (const product of this.products) {
+        for (const product of this.orderLine) {
             totalPrice += product.getTotal();
         }
         this.totalOrderPrice = totalPrice;
@@ -55,17 +53,14 @@ export class Order {
     private calculateDiscount(subTotal: number): number {
         let discount = 0;
         for (const coupon of this.coupons) {
-            if (coupon.isValid(this.date)) {
-                discount += coupon.getDiscount(subTotal);
-            }
+            discount += coupon.getDiscount(subTotal);
         }
         this.discount = discount;
         return discount;
     }
 
     getTotalPrice() {
-        const freight = this.freight;
-        const subTotal = this.calculatePrice() + this.getTaxes() + freight;
+        const subTotal = this.calculatePrice() + this.getTaxes() + this.freight;
         const discount = this.calculateDiscount(subTotal);
         return subTotal - discount;
     }
@@ -73,12 +68,14 @@ export class Order {
     changeStatus(newStatus: string) {
         this.status = newStatus;
     }
+
     setFreight(freight: number) {
         this.freight = freight;
     }
+
     getTaxes() {
         let taxas = 0;
-        for (const product of this.products) {
+        for (const product of this.orderLine) {
             if (product instanceof OrderLineWithFare) {
                 taxas += product.calculateFare();
             }
