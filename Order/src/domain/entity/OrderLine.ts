@@ -1,6 +1,8 @@
+import { AppError } from "./AppError";
+
 export class OrderLine {
     constructor(readonly id: string, readonly quantity: number, readonly price: number) {
-        if (quantity < 0) throw new Error("Product quantity must not be negative");
+        if (quantity < 0) throw new AppError("Product quantity must not be negative");
     }
 
     getTotal() {

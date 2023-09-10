@@ -3,6 +3,7 @@ import { OrderLine } from "./OrderLine";
 import { Coupon } from "./Coupon";
 import { OrderLineWithFare } from "./ProductWithFare";
 import { OrderCode } from "./OrderCode";
+import { AppError } from "./AppError";
 
 export class Order {
     readonly id: string;
@@ -38,7 +39,8 @@ export class Order {
     addCoupon(couponCode: string, percentage: number, expire_date: Date = new Date()) {
         const coupon = new Coupon(couponCode, percentage, expire_date);
         if (!coupon.isValid(this.date)) return;
-        if (this.coupons.some((coupon) => coupon.getCode() === couponCode)) throw new Error("Coupon already Applied");
+        if (this.coupons.some((coupon) => coupon.getCode() === couponCode))
+            throw new AppError("Coupon already Applied");
         this.coupons.push(coupon);
     }
 
@@ -46,12 +48,12 @@ export class Order {
         const { price, quantity, fare, hasFare, id } = props;
         const productId = id ?? randomUUID();
         let product = new OrderLine(productId, quantity, price);
-        if (hasFare && !fare) throw new Error("Product with must has fare provide");
+        if (hasFare && !fare) throw new AppError("Product with must has fare provide");
         if (hasFare && fare) {
             product = new OrderLineWithFare(productId, quantity, price, fare);
         }
         if (this.orderLine.some((product) => product.id === id)) {
-            throw new Error("Product already select.");
+            throw new AppError("Product already select.");
         }
         this.orderLine.push(product);
     }

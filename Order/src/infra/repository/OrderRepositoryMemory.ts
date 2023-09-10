@@ -1,4 +1,5 @@
 import { OrderRepository } from "@/application/repository/OrderRepository";
+import { AppError } from "@/domain/entity/AppError";
 import { Order } from "@/domain/entity/Order";
 
 export class OrderRepositoryMemory implements OrderRepository {
@@ -17,7 +18,7 @@ export class OrderRepositoryMemory implements OrderRepository {
         this.orders.set(order.document, order);
     }
     async get(document: string): Promise<Order> {
-        if (!this.orders.has(document)) throw new Error("Order not found");
+        if (!this.orders.has(document)) throw new AppError("Order not found");
         const order = this.orders.get(document);
         return order!;
     }

@@ -1,4 +1,5 @@
 import { ProductRepository } from "@/application/repository/ProductRepository";
+import { AppError } from "@/domain/entity/AppError";
 import { Product } from "@/domain/entity/Product";
 export class ProductRepositoryMemory implements ProductRepository {
     products: Product[] = [
@@ -46,7 +47,7 @@ export class ProductRepositoryMemory implements ProductRepository {
     }
     async getById(product_id: string): Promise<Product> {
         const product = this.products.find((prod) => prod.id === product_id);
-        if (!product) throw new Error("Product not found");
+        if (!product) throw new AppError("Product not found");
         return product;
     }
     async persiste(product: Product): Promise<void> {

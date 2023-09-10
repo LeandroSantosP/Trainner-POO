@@ -1,8 +1,8 @@
 export class FreightCalculator {
-    static execute(products: Input): Output {
+    static execute(products: Input, distance: number = 1000): Output {
         let freight = 0;
         for (const item of products) {
-            freight = 1000 * item.volume * (item.density / 100);
+            freight = distance * item.volume * (item.density / 100);
         }
         return {
             freight: Math.round(freight),

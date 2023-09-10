@@ -1,4 +1,5 @@
 import { ProductDAO, ProductDAOType } from "@/application/interfaces/ProductDAO";
+import { AppError } from "@/domain/entity/AppError";
 
 export class ProductDAOMemory implements ProductDAO {
     products: ProductDAOType[] = [
@@ -9,7 +10,7 @@ export class ProductDAOMemory implements ProductDAO {
 
     async get(productId: string): Promise<ProductDAOType> {
         const product = this.products.find((p) => p.id === productId);
-        if (!product) throw new Error("Product not found");
+        if (!product) throw new AppError("Product not found");
         return product;
     }
 }

@@ -1,3 +1,4 @@
+import { AppError } from "@/domain/entity/AppError";
 import { Order } from "@/domain/entity/Order";
 
 test("Deve criar um pedido e calcular o total.", function () {
@@ -20,13 +21,15 @@ test("Não deve ser possível adicionar um item repetido no pedido.", function (
 
     order.addLine({ quantity: 4, price: 100, id: "1234" });
 
-    expect(() => order.addLine({ quantity: 4, price: 100, id: "1234" })).toThrow(new Error("Product already select."));
+    expect(() => order.addLine({ quantity: 4, price: 100, id: "1234" })).toThrow(
+        new AppError("Product already select.")
+    );
 });
 
 test("Não deve ser possível adicionar coupon ja existente", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
     order.addCoupon("VALE10", 10, new Date("2023-11-30"));
-    expect(() => order.addCoupon("VALE10", 30, new Date("2023-11-30"))).toThrow(new Error("Coupon already Applied"));
+    expect(() => order.addCoupon("VALE10", 30, new Date("2023-11-30"))).toThrow(new AppError("Coupon already Applied"));
 });
 
 test("Deve criar um pedido e calcular o total com um cupom de 10% e outro de 30%.", function () {

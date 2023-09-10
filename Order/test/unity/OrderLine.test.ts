@@ -1,3 +1,4 @@
+import { AppError } from "@/domain/entity/AppError";
 import { OrderLine } from "@/domain/entity/OrderLine";
 import { randomUUID } from "crypto";
 
@@ -17,5 +18,5 @@ test("Deve ser possível criar um produto e calcular o total", function () {
 test("Deve não deve ser possível criar um produto com quantidade negativa", function () {
     const id = randomUUID();
 
-    expect(() => new OrderLine(id, -10, 2000)).toThrow(new Error("Product quantity must not be negative"));
+    expect(() => new OrderLine(id, -10, 2000)).toThrow(new AppError("Product quantity must not be negative"));
 });
