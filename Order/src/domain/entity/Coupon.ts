@@ -8,8 +8,7 @@ export class Coupon {
     }
 
     isValid(date: Date): boolean {
-        const isVAlid = this.expire_date.getTime() > date.getTime();
-        return !!isVAlid;
+        return !!(this.expire_date.getTime() > date.getTime());
     }
 
     getCode() {
