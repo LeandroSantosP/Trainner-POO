@@ -18,7 +18,7 @@ export class Order {
     constructor(readonly document: string, readonly date: Date, readonly sequence: number = 1, id?: string) {
         this.id = id ?? randomUUID();
         this.code = new OrderCode(date, sequence);
-        this.products = [];
+        this.orderLine = [];
         this.orderLine = [];
         this.coupons = [];
         this.status = "open";
@@ -101,14 +101,6 @@ export class Order {
 
     getCode() {
         return this.code.getCode();
-    }
-
-    changeStatus(newStatus: string) {
-        this.status = newStatus;
-    }
-
-    setFreight(freight: number) {
-        this.freight = freight;
     }
 
     getStatus() {
