@@ -4,7 +4,7 @@ import { Clock } from "@/application/interfaces/Clock";
 import { FakeClock } from "@/domain/domainServices/FakeClock";
 import { Coupon } from "@/domain/entity/Coupon";
 import knexConnection from "@/infra/database/knexfile";
-import { OrderServiceFactoryMemory } from "@/infra/factory/OrderServiceFactoryMemory";
+import { OrderServiceFactoryDatabase } from "@/infra/factory/OrderServiceFactoryDatabase";
 import knexClear from "knex-cleaner";
 
 let applyOrderInput = {
@@ -33,14 +33,14 @@ beforeEach(async () => {
     await knexClear.clean(knexConnection);
     clock = new FakeClock();
     clock.setCurrentDate(new Date("2023-10-10"));
-    orderServiceFactory = new OrderServiceFactoryMemory();
+    orderServiceFactory = new OrderServiceFactoryDatabase();
     orderService = new OrderService(orderServiceFactory, clock);
 });
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
     await orderService.applyOrder(applyOrderInput);
     clock.setCurrentDate(new Date("2023-10-10"));
     const output = await orderService.getOrder("81307907008");
-
+    expect(output.orderCode).toBe("202300000001");
     expect(output.document).toBe("81307907008");
     expect(output.orderStatus).toBe("open");
     expect(output.orderDate).toEqual(new Date("2023-10-10"));

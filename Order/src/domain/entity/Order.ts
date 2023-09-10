@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { OrderLine } from "./OrderLine";
 import { Coupon } from "./Coupon";
 import { OrderLineWithFare } from "./ProductWithFare";
+import { OrderCode } from "./OrderCode";
 
 export class Order {
     readonly id: string;
@@ -12,10 +13,11 @@ export class Order {
     private coupons: Coupon[];
     private discount: number;
     private freight: number = 0;
-    private code: string = randomUUID();
+    private code: OrderCode;
 
-    constructor(readonly document: string, readonly date: Date, id?: string, readonly sequence: number = 1) {
+    constructor(readonly document: string, readonly date: Date, readonly sequence: number = 1, id?: string) {
         this.id = id ?? randomUUID();
+        this.code = new OrderCode(date, sequence);
         this.products = [];
         this.coupons = [];
         this.totalOrderPrice = 0;
@@ -25,14 +27,13 @@ export class Order {
     }
 
     static restore(input: RestoreInput): Order {
-        const { document, discount, freight, id, price, status, taxes, orderDate, code } = input;
-        const order = new Order(document, orderDate, id);
+        const { document, discount, freight, id, price, status, taxes, orderDate, sequence } = input;
+        const order = new Order(document, orderDate, sequence, id);
         order.changeStatus(status);
         order.totalOrderPrice = price;
         order.freight = freight;
         order.discount = discount;
         order.taxas = taxes;
-        order.code = code;
         return order;
     }
 
@@ -85,12 +86,6 @@ export class Order {
         return total;
     }
 
-    changeStatus(newStatus: string) {
-        this.status = newStatus;
-    }
-    setFreight(freight: number) {
-        this.freight = freight;
-    }
     getTaxes() {
         let taxas = 0;
         for (const product of this.products) {
@@ -103,7 +98,19 @@ export class Order {
     }
 
     getCode() {
-        return this.code;
+        return this.code.getCode();
+    }
+
+    changeStatus(newStatus: string) {
+        this.status = newStatus;
+    }
+
+    setFreight(freight: number) {
+        this.freight = freight;
+    }
+
+    getStatus() {
+        return this.status;
     }
 
     getCompleteInfos() {
@@ -117,21 +124,17 @@ export class Order {
             freight,
         };
     }
-
-    getStatus() {
-        return this.status;
-    }
 }
 
 type RestoreInput = {
     id: string;
     document: string;
     price: number;
+    sequence: number;
     freight: number;
     discount: number;
     taxes: number;
     orderDate: Date;
-    code: string;
     status: string;
 };
 

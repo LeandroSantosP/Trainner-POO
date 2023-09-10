@@ -10,6 +10,11 @@ test("Deve criar um pedido e calcular o total.", function () {
     expect(order.getStatus()).toBe("open");
 });
 
+test("Deve criar um pedido com a código", function () {
+    const order = new Order("92218475006", new Date("2023-10-22"), 10, "1234");
+    expect(order.getCode()).toBe("202300000010");
+});
+
 test("Não deve ser possível adicionar um item repetido no pedido.", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
 
@@ -54,9 +59,7 @@ test("Deve ser possível criar uma order com produtos que contem taxas e total d
 test("Deve ser possível obter o desconto, taxas e o valor total de um pedido e mudar o status para: conclude", function () {
     const order = new Order("92218475006", new Date("2023-10-22"));
     const coupon_expire = new Date("2023-11-22");
-
     order.addCoupon("VALE10", 10, coupon_expire);
-
     order.addLine({
         quantity: 2,
         price: 1000,

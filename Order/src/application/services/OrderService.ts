@@ -5,6 +5,7 @@ import { CouponRepository } from "../repository/CouponRepository";
 import { ProductRepository } from "../repository/ProductRepository";
 import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
 import { OrderServiceFactory } from "../factory/OrderServiceFactory";
+import { log } from "console";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -18,7 +19,8 @@ export class OrderService {
 
     async applyOrder(input: ApplyOrderInput): Promise<void> {
         const currentDate = this.clock.getCurrentDate();
-        const order = new Order(input.document, currentDate);
+        const sequence = await this.orderRepository.getSequence();
+        const order = new Order(input.document, currentDate, sequence);
         const coupon = input.coupon ? await this.couponRepository.getByCode(input.coupon) : null;
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
@@ -52,6 +54,7 @@ export class OrderService {
             ...infos,
             document: order.document,
             orderDate: order.date,
+            orderCode: order.getCode(),
             orderStatus: order.getStatus(),
         };
         return output;
@@ -60,6 +63,7 @@ export class OrderService {
 
 type GetOrderOutPut = {
     document: string;
+    orderCode: string;
     taxes: number;
     totalPrice: number;
     discount: number;

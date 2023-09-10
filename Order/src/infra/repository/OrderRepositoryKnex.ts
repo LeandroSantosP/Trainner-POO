@@ -10,10 +10,10 @@ export class OrderRepositoryKnex implements OrderRepository {
     constructor() {
         this.app = knexConnection;
     }
+
     async persiste(order: Order): Promise<void> {
         const total = order.getTotalPrice();
         const { discount, freight } = order.getCompleteInfos();
-
         await this.app("order").insert({
             id: order.id,
             sequence: order.sequence,
@@ -46,7 +46,7 @@ export class OrderRepositoryKnex implements OrderRepository {
         const [orderData] = await this.app("order").where("order.client_document", document);
         const order = Order.restore({
             id: orderData.id,
-            code: orderData.code,
+            sequence: orderData.sequense,
             document: orderData.client_document,
             discount: parseFloat(orderData.discount),
             taxes: parseFloat(orderData.taxes),
@@ -69,6 +69,12 @@ export class OrderRepositoryKnex implements OrderRepository {
             order.addLine(data);
         }
         return order;
+    }
+
+    async getSequence(): Promise<number> {
+        const [sequenceData] = await this.app("order").count();
+        const sequence = sequenceData.count.toString();
+        return parseInt(sequence) + 1;
     }
     async close() {
         await this.app.destroy();

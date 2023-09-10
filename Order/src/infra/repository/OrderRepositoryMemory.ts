@@ -21,5 +21,8 @@ export class OrderRepositoryMemory implements OrderRepository {
         const order = this.orders.get(document);
         return order!;
     }
+    async getSequence(): Promise<number> {
+        return this.orders.size;
+    }
     async close(): Promise<void> {}
 }
