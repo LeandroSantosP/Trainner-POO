@@ -19,7 +19,7 @@ export class DistanceCalculator {
             miles: Math.round(distance),
             kilometers: Math.round(distance * 1.609344),
         } as { [key: string]: number };
-        if (!result[unit]) throw new AppError("Invalid unit");
+        if (!result[unit] && result[unit] != 0) throw new AppError("Invalid unit");
         return result[unit];
     }
 }

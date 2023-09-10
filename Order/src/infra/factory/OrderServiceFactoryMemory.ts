@@ -5,6 +5,8 @@ import { ProductRepository } from "@/application/repository/ProductRepository";
 import { OrderRepositoryMemory } from "../repository/OrderRepositoryMemory";
 import { CouponRepositoryMemory } from "../repository/CouponRepositoryMemory";
 import { ProductRepositoryMemory } from "../repository/ProductRepositoryMemory";
+import { AddressRepository } from "@/application/repository/AddressRepository";
+import { AddressRepositoryMemory } from "../repository/AddressRepositoryMemory";
 
 export class OrderServiceFactoryMemory implements OrderServiceFactory {
     orderRepository(): OrderRepository {
@@ -15,5 +17,8 @@ export class OrderServiceFactoryMemory implements OrderServiceFactory {
     }
     productRepository(): ProductRepository {
         return ProductRepositoryMemory.getInstance();
+    }
+    addressRepository(): AddressRepository {
+        return AddressRepositoryMemory.getInstance();
     }
 }

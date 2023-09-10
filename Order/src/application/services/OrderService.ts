@@ -5,13 +5,16 @@ import { CouponRepository } from "../repository/CouponRepository";
 import { ProductRepository } from "../repository/ProductRepository";
 import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
 import { OrderServiceFactory } from "../factory/OrderServiceFactory";
-import { log } from "console";
+import { AddressRepository } from "../repository/AddressRepository";
+import { DistanceCalculator } from "@/domain/entity/DistanceCalculator";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
     readonly couponRepository: CouponRepository;
     readonly productRepository: ProductRepository;
+    readonly addressRepository: AddressRepository;
     constructor(orderServiceFactory: OrderServiceFactory, readonly clock: Clock) {
+        this.addressRepository = orderServiceFactory.addressRepository();
         this.orderRepository = orderServiceFactory.orderRepository();
         this.couponRepository = orderServiceFactory.couponRepository();
         this.productRepository = orderServiceFactory.productRepository();
@@ -20,7 +23,7 @@ export class OrderService {
     async applyOrder(input: ApplyOrderInput): Promise<void> {
         const currentDate = this.clock.getCurrentDate();
         const sequence = await this.orderRepository.getSequence();
-        const order = new Order(input.document, currentDate, sequence);
+        const order = new Order(input.documentTo, currentDate, sequence);
         const coupon = input.coupon ? await this.couponRepository.getByCode(input.coupon) : null;
         if (coupon) {
             order.addCoupon(coupon.getCode(), coupon.percentage, coupon.expire_date);
@@ -40,7 +43,10 @@ export class OrderService {
                 fare: product.fare,
             });
         }
-        const { freight } = FreightCalculator.execute(productDimensions);
+        const addressTo = await this.addressRepository.getByDocument(input.documentTo);
+        const addressFrom = await this.addressRepository.getByDocument(input.documentFrom);
+        const distance = DistanceCalculator.execute(addressTo.cord, addressFrom.cord);
+        const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
         await this.orderRepository.persiste(order);
         // Order required
@@ -72,7 +78,8 @@ type GetOrderOutPut = {
 };
 
 type ApplyOrderInput = {
-    document: string;
+    documentTo: string;
+    documentFrom: string;
     coupon?: string;
     items: Array<{ productId: string; quantity: number }>;
 };

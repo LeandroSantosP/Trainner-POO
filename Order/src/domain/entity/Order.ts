@@ -84,12 +84,6 @@ export class Order {
         return total;
     }
 
-    changeStatus(newStatus: string) {
-        this.status = newStatus;
-    }
-    setFreight(freight: number) {
-        this.freight = freight;
-    }
     getTaxes() {
         let taxas = 0;
         for (const product of this.orderLine) {
@@ -99,6 +93,14 @@ export class Order {
         }
         this.taxas = taxas;
         return taxas;
+    }
+
+    changeStatus(newStatus: string) {
+        this.status = newStatus;
+    }
+
+    setFreight(freight: number) {
+        this.freight = freight;
     }
 
     getCode() {

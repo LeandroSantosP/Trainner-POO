@@ -5,6 +5,8 @@ import { ProductRepository } from "@/application/repository/ProductRepository";
 import { ProductRepositoryMemory } from "../repository/ProductRepositoryMemory";
 import { CouponRepositoryKnex } from "../repository/CouponRepositoryKnex";
 import { OrderRepositoryKnex } from "../repository/OrderRepositoryKnex";
+import { AddressRepository } from "@/application/repository/AddressRepository";
+import { AddressRepositoryMemory } from "../repository/AddressRepositoryMemory";
 
 export class OrderServiceFactoryDatabase implements OrderServiceFactory {
     orderRepository(): OrderRepository {
@@ -15,5 +17,8 @@ export class OrderServiceFactoryDatabase implements OrderServiceFactory {
     }
     productRepository(): ProductRepository {
         return ProductRepositoryMemory.getInstance();
+    }
+    addressRepository(): AddressRepository {
+        return AddressRepositoryMemory.getInstance();
     }
 }
