@@ -24,6 +24,7 @@ export class Order {
         this.status = "open";
     }
 
+    //i[]
     static restore(input: RestoreInput): Order {
         const { document, discount, freight, id, price, status, taxes, orderDate, sequence } = input;
         const order = new Order(document, orderDate, sequence, id);
