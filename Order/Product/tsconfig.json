@@ -41,7 +41,9 @@
     "outDir": "./dist"
   },
   "include": [
-    "**/*"
+    "**/*",
+    "../dataModel/migrations",
+    "../dataModel/seeds"
   ],
   "exclude": [
     "node_modules",

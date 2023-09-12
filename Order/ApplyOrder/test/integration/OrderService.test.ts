@@ -15,15 +15,15 @@ let applyOrderInput = {
     documentFrom: "85878184656",
     items: [
         {
-            productId: "123",
+            productId: "a3ff22d2-4e54-4db4-ae87-9e739f578009",
             quantity: 1,
         },
         {
-            productId: "124",
+            productId: "e0907ecf-3b90-4bbf-b741-ad3da998b59e",
             quantity: 2,
         },
         {
-            productId: "125",
+            productId: "3faccc5e-ab42-405e-b75e-45fba9c920cd",
             quantity: 4,
         },
     ],
@@ -34,7 +34,11 @@ let orderService: OrderService;
 let orderServiceFactory: OrderServiceFactory;
 
 beforeEach(async () => {
-    await knexClear.clean(knexConnection);
+    await knexClear.clean(knexConnection, {
+        mode: "delete",
+        restartIdentity: true,
+        ignoreTables: ["product"],
+    });
     clock = new FakeClock();
     orderServiceFactory = new OrderServiceFactoryDatabase();
     await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));

@@ -34,6 +34,7 @@ export class OrderService {
         }
         const productIds = input.items.map((item) => item.productId);
         const products = await this.productGateway.getProducts(productIds);
+
         const productDimensions = products.map((product) => ({
             density: product.density,
             volume: product.volume,
@@ -43,6 +44,7 @@ export class OrderService {
             const product = products.find((product) => product.productId === item.productId);
             if (!product) throw new AppError("Product not found");
             order.addLine({
+                id: item.productId,
                 quantity: item.quantity,
                 price: product.price,
                 hasFare: !!product.fare,
