@@ -27,7 +27,7 @@ export class OrderRepositoryKnex implements OrderRepository {
             freight,
         });
 
-        for (const line of order.products) {
+        for (const line of order.orderLine) {
             let data = {
                 id: randomUUID(),
                 product_id: line.id,
