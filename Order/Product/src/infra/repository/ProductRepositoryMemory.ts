@@ -1,6 +1,7 @@
 import { ProductRepository } from "@/application/repository/ProductRepository";
 import { AppError } from "@/domain/entity/AppError";
 import { Product } from "@/domain/entity/Product";
+
 export class ProductRepositoryMemory implements ProductRepository {
     products: Product[] = [
         Product.create({
