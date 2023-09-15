@@ -30,4 +30,7 @@ export class RabbitMqAdapter implements Queue {
             }
         });
     }
+    async close(): Promise<void> {
+        await this.connection.close();
+    }
 }

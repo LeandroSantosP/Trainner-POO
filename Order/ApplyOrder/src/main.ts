@@ -1,4 +1,5 @@
 import dovEnv from "dotenv";
+import { RabbitMqAdapter } from "./infra/queue/RabbitMqAdapter";
 
 dovEnv.config();
 
@@ -7,3 +8,4 @@ async function main() {
 }
 
 main();
+new RabbitMqAdapter();

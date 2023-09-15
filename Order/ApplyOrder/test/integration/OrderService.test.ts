@@ -30,6 +30,7 @@ let applyOrderInput = {
         },
     ],
 };
+// manager
 
 let clock: Clock;
 let orderService: OrderService;
@@ -76,6 +77,7 @@ test("Deve ser possível solicitar um pedido com 2 items e aplicar um cupom de d
 });
 
 afterAll(async () => {
+    await queue.close();
     await orderServiceFactory.orderRepository().close();
     await orderServiceFactory.couponRepository().close();
 });
