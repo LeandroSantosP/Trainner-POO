@@ -21,7 +21,7 @@ services:
         container_name: rabbitmq_m_order
         restart: always
         ports:
-            - 25672:25672
+            - 5672:5672
             - ${RMQ_PORT_CLI}:${RMQ_PORT_CLI}
         volumes:
             - /docker_conf/rabbitmq/data/:/var/lib/rabbitmq/

@@ -29,6 +29,7 @@
   "author": "Leandro Pereira Dos Santos",
   "license": "ISC",
   "devDependencies": {
+    "@types/amqplib": "^0.10.1",
     "@types/jest": "^29.5.2",
     "@types/knex-cleaner": "^1.3.3",
     "@types/node": "^18.11.18",
