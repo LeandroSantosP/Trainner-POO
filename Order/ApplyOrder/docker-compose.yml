@@ -15,3 +15,17 @@ services:
             POSTGRES_USER: ${DB_USER}
             POSTGRES_PASSWORD: ${DB_PASS}
             POSTGRES_DB: ${DB_NAME}
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq_m_order
+        restart: always
+        ports:
+            - 25672:25672
+            - ${RMQ_PORT_CLI}:${RMQ_PORT_CLI}
+        volumes:
+            - /docker_conf/rabbitmq/data/:/var/lib/rabbitmq/
+
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RQM_USER}
+            - RABBITMQ_DEFAULT_PASS=${RQM_PASS}
