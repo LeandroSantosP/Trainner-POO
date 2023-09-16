@@ -39,17 +39,15 @@ let orderServiceFactory: OrderServiceFactory;
 let queue: Queue;
 
 beforeEach(async () => {
-    queue = new RabbitMqAdapter();
-    await queue.connect();
     await knexClear.clean(knexConnection, {
         mode: "delete",
         restartIdentity: true,
         ignoreTables: ["product"],
     });
+    queue = new RabbitMqAdapter();
+    await queue.connect();
     clock = new FakeClock();
     orderServiceFactory = new OrderServiceFactoryDatabase();
-    await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
-    await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
     clock.setCurrentDate(new Date("2023-10-10"));
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
