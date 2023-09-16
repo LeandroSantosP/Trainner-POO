@@ -1,7 +1,8 @@
 import { AppError } from "./entity/AppError";
+import { StokeEntry } from "./entity/StokeEntry";
 
 export class StokeEntryCalculator {
-    static execute(products: { productId: string; operation: "in" | "out"; quantity: number }[]) {
+    static execute(products: StokeEntry[]) {
         let quantity = 0;
 
         for (const product of products) {

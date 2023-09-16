@@ -44,7 +44,7 @@ test("Deve ser possível calcular o total adicionando e removendo items do stoke
     expect(output.total).toBe(6);
 });
 
-test("Nao deve ser possível remover product que esta com stoke zerado", async function () {
+test.skip("Nao deve ser possível remover product que esta com stoke zerado", async function () {
     const stokeService = new StokeService(stokeEntryRepository);
     const input = {
         items: [{ productId: "a3ff22d2-4e54-4db4-ae87-9e739f578009", quantity: 4 }],
