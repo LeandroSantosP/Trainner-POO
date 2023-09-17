@@ -8,6 +8,8 @@ import { AddressRepository } from "../repository/AddressRepository";
 import { DistanceCalculator } from "@/domain/entity/DistanceCalculator";
 import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AppError } from "@/domain/entity/AppError";
+import { Queue } from "@/infra/queue/Queue";
+import { OrderApplied } from "@/infra/events/OrderApplied";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -17,7 +19,8 @@ export class OrderService {
     constructor(
         orderServiceFactory: OrderServiceFactory,
         readonly productGateway: ProductGateway,
-        readonly clock: Clock
+        readonly clock: Clock,
+        readonly queue: Queue
     ) {
         this.addressRepository = orderServiceFactory.addressRepository();
         this.orderRepository = orderServiceFactory.orderRepository();
@@ -57,6 +60,7 @@ export class OrderService {
         const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
         await this.orderRepository.persiste(order);
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
         // Order required
     }
 

@@ -4,6 +4,7 @@ import { Knex } from "knex";
 import knexConnection from "../database/knexfile";
 import { randomUUID } from "crypto";
 import { OrderLineWithFare } from "../../domain/entity/OrderLineWithFare";
+import { AppError } from "@/domain/entity/AppError";
 
 export class OrderRepositoryKnex implements OrderRepository {
     app: Knex;
@@ -44,6 +45,7 @@ export class OrderRepositoryKnex implements OrderRepository {
     }
     async get(document: string): Promise<Order> {
         const [orderData] = await this.app("order").where("order.client_document", document);
+        if (!orderData) throw new AppError("Order Not found");
         const order = Order.restore({
             id: orderData.id,
             sequence: orderData.sequense,

@@ -1,17 +1,16 @@
 version: "3"
 
 services:
-    db:
-        container_name: postgress_order
-        image: postgres:15.2
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq_m_order
         restart: always
         ports:
-            - ${DB_PORT}:${DB_PORT}
+            - 5672:5672
+            - ${RMQ_PORT_CLI}:${RMQ_PORT_CLI}
         volumes:
-            - ./db_backup:/var/lib/postgresql/data/
-        expose:
-            - ${DB_PORT}
+            - /docker_conf/rabbitmq/data/:/var/lib/rabbitmq/
+
         environment:
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_PASSWORD: ${DB_PASS}
-            POSTGRES_DB: ${DB_NAME}
+            - RABBITMQ_DEFAULT_USER=${RQM_USER}
+            - RABBITMQ_DEFAULT_PASS=${RQM_PASS}

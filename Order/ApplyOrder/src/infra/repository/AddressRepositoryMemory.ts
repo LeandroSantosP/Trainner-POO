@@ -3,7 +3,10 @@ import { Address } from "@/domain/entity/Address";
 import { AppError } from "@/domain/entity/AppError";
 
 export class AddressRepositoryMemory implements AddressRepository {
-    address: Address[] = [];
+    address: Address[] = [
+        new Address("81307907008", "", "", "", 40.7128, -74.006),
+        new Address("85878184656", "", "", "", 34.0522, -118.2437),
+    ];
 
     static instance: AddressRepositoryMemory;
 

@@ -1,5 +1,7 @@
 import knex from "knex";
 import "dotenv/config";
+// const config = require("../../../knexfile");
+// console.log(config);
 const knexConnection = knex({
     client: "pg",
     connection: {

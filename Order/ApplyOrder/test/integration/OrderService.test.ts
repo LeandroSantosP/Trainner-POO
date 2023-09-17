@@ -8,6 +8,8 @@ import knexConnection from "@/infra/database/knexfile";
 import { OrderServiceFactoryDatabase } from "@/infra/factory/OrderServiceFactoryDatabase";
 import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AxiosHttpClient } from "@/infra/httpClient/AxiosHttpClient";
+import { Queue } from "@/infra/queue/Queue";
+import { RabbitMqAdapter } from "@/infra/queue/RabbitMqAdapter";
 import knexClear from "knex-cleaner";
 
 let applyOrderInput = {
@@ -28,10 +30,13 @@ let applyOrderInput = {
         },
     ],
 };
+// manager
 
 let clock: Clock;
 let orderService: OrderService;
 let orderServiceFactory: OrderServiceFactory;
+
+let queue: Queue;
 
 beforeEach(async () => {
     await knexClear.clean(knexConnection, {
@@ -39,14 +44,14 @@ beforeEach(async () => {
         restartIdentity: true,
         ignoreTables: ["product"],
     });
+    queue = new RabbitMqAdapter();
+    await queue.connect();
     clock = new FakeClock();
     orderServiceFactory = new OrderServiceFactoryDatabase();
-    await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
-    await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
     clock.setCurrentDate(new Date("2023-10-10"));
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
-    orderService = new OrderService(orderServiceFactory, productGateway, clock);
+    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
 });
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
     await orderService.applyOrder(applyOrderInput);
@@ -70,6 +75,7 @@ test("Deve ser possível solicitar um pedido com 2 items e aplicar um cupom de d
 });
 
 afterAll(async () => {
+    await queue.close();
     await orderServiceFactory.orderRepository().close();
     await orderServiceFactory.couponRepository().close();
 });
