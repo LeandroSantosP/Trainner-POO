@@ -18,7 +18,7 @@ module.exports = {
     },
     migrations: {
         tableName: "knex_migrations",
-        directory: "../dataModel/migrations",
+        directory: "../database/migrations",
     },
     timezone: "UTC",
 };
