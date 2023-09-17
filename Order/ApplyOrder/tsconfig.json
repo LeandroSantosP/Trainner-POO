@@ -9,7 +9,6 @@
     "types": [
       "node",
       "jest",
-      "bun-types"
     ],
     "baseUrl": ".",
     "paths": {

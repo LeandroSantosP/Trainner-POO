@@ -3,7 +3,7 @@ import amqp, { Connection } from "amqplib";
 export class RabbitMqAdapter {
     private connection!: Connection;
     async connect(): Promise<void> {
-        this.connection = await amqp.connect("amqp://admin:1234@localhost:5672");
+        this.connection = await amqp.connect("amqp://admin:admin@localhost:5672");
     }
     async publisher(queueName: string, data: any): Promise<void> {
         const channel = await this.connection.createChannel();

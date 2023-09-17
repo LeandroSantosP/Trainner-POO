@@ -5,6 +5,7 @@ import { CouponRepositoryKnex } from "../repository/CouponRepositoryKnex";
 import { OrderRepositoryKnex } from "../repository/OrderRepositoryKnex";
 import { AddressRepository } from "@/application/repository/AddressRepository";
 import { AddressRepositoryMemory } from "../repository/AddressRepositoryMemory";
+import { AddressRepositoryKnex } from "../repository/AddressRepositoryKnex";
 
 export class OrderServiceFactoryDatabase implements OrderServiceFactory {
     orderRepository(): OrderRepository {
@@ -14,6 +15,6 @@ export class OrderServiceFactoryDatabase implements OrderServiceFactory {
         return new CouponRepositoryKnex();
     }
     addressRepository(): AddressRepository {
-        return AddressRepositoryMemory.getInstance();
+        return new AddressRepositoryKnex();
     }
 }

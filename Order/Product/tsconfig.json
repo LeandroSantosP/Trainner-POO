@@ -8,8 +8,7 @@
     "target": "es2022",
     "types": [
       "node",
-      "jest",
-      "bun-types"
+      "jest"
     ],
     "baseUrl": ".",
     "paths": {
