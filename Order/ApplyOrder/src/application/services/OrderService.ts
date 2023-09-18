@@ -10,6 +10,7 @@ import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AppError } from "@/domain/entity/AppError";
 import { Queue } from "@/infra/queue/Queue";
 import { OrderApplied } from "@/infra/events/OrderApplied";
+import { MailerGateway } from "../interfaces/MailerGateway";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -20,7 +21,8 @@ export class OrderService {
         orderServiceFactory: OrderServiceFactory,
         readonly productGateway: ProductGateway,
         readonly clock: Clock,
-        readonly queue: Queue
+        readonly queue: Queue,
+        readonly mailerGateway: MailerGateway
     ) {
         this.addressRepository = orderServiceFactory.addressRepository();
         this.orderRepository = orderServiceFactory.orderRepository();

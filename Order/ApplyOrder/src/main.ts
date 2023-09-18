@@ -8,10 +8,12 @@ import { FakeClock } from "./domain/domainServices/FakeClock";
 import { ProductGateway } from "./infra/gateways/ProductGateWay";
 import { AxiosHttpClient } from "./infra/httpClient/AxiosHttpClient";
 import { QueueController } from "./infra/queue/QueueController";
+import { NodeMailerAdapter } from "./infra/gateways/NodeMailerAdapter";
 
 dovEnv.config();
 
 async function main() {
+    const mailerGateway = new NodeMailerAdapter();
     const queue = new RabbitMqAdapter();
     await queue.connect();
     const httpServer = new ExpressServerAdapter();
@@ -19,7 +21,7 @@ async function main() {
     const clock = new FakeClock();
     const orderServiceFactory = new OrderServiceFactoryDatabase();
     const productGateway = new ProductGateway(httpClient);
-    const orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
+    const orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, mailerGateway);
     new QueueController(queue, orderService);
     new RestController(httpServer, orderService, queue);
     await httpServer.listen(3002, console.log("Serve is running on port 3002"));
