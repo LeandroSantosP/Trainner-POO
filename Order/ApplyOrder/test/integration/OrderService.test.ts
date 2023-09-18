@@ -14,6 +14,7 @@ import { sleep } from "../util/sleep";
 import { Address } from "@/domain/entity/Address";
 import { MailerGateway } from "@/application/interfaces/MailerGateway";
 import { NodeMailerAdapter } from "@/infra/gateways/NodeMailerAdapter";
+import exp from "constants";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -61,7 +62,7 @@ beforeEach(async () => {
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
     await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
     await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
-    await orderService.applyOrder(applyOrderInput);
+    await orderService.applyOrder({ ...applyOrderInput });
     await sleep();
     clock.setCurrentDate(new Date("2023-10-10"));
     const output = await orderService.getOrder("81307907008");
@@ -91,8 +92,11 @@ test("Deve ser possível solicitar um pedido e disparar um email.", async functi
     clock.setCurrentDate(new Date("2023-10-10"));
     await orderServiceFactory.couponRepository().persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
     await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
-
     await sleep();
+
+    const message = await orderServiceFactory.messageRepository().getById("1235");
+    expect(message.body).toBe("Seu Pedido foi aplicado com sucesso!");
+    expect(message.getId()).toBe("1235");
     const output = await orderService.getOrder("81307907008");
     expect(output.discount).toBe(1430.4);
     expect(output.taxes).toBe(1730);

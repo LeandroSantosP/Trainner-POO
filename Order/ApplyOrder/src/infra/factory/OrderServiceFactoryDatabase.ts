@@ -9,7 +9,7 @@ import { MessageRepository } from "@/application/repository/MessageRepository";
 import { MessageRepositoryMemory } from "../repository/MailerRepositoryMemory";
 
 export class OrderServiceFactoryDatabase implements OrderServiceFactory {
-    mailerRepository(): MessageRepository {
+    messageRepository(): MessageRepository {
         return MessageRepositoryMemory.getInstance();
     }
     orderRepository(): OrderRepository {

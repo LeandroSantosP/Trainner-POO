@@ -1,7 +1,33 @@
 import { MailerGateway } from "@/application/interfaces/MailerGateway";
+import nodemailer, { Transporter } from "nodemailer";
+import MailerSettings from "./MailerSettings";
 
 export class NodeMailerAdapter implements MailerGateway {
-    send(content: { from: string; to: string; subject: string; body: string }): Promise<void> {
-        throw new Error("Method not implemented.");
+    private transporter: Transporter;
+    constructor() {
+        this.transporter = nodemailer.createTransport(MailerSettings);
+    }
+    async send(content: { from: string; to: string; subject: string; body: string; html?: string }): Promise<{
+        status: "sended" | "failed";
+    }> {
+        try {
+            console.log(content);
+
+            const info = await this.transporter.sendMail({
+                from: content.from, // sender address
+                to: content.to, // list of receivers
+                subject: content.subject, // Subject line
+                text: content.body, // plain text body
+                html: content.html, // html body
+            });
+            console.log("Message sent: %s", info.messageId);
+            return {
+                status: "sended",
+            };
+        } catch (error) {
+            return {
+                status: "failed",
+            };
+        }
     }
 }
