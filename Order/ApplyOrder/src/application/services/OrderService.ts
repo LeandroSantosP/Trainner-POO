@@ -13,6 +13,7 @@ import { OrderApplied } from "@/infra/events/OrderApplied";
 import { MailerGateway } from "../interfaces/MailerGateway";
 import { MessageRepository } from "../repository/MessageRepository";
 import { Message } from "@/domain/entity/Message";
+import { JobQueue } from "../interfaces/JobQueue";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -25,7 +26,8 @@ export class OrderService {
         readonly productGateway: ProductGateway,
         readonly clock: Clock,
         readonly queue: Queue,
-        readonly mailerGateway: MailerGateway
+        readonly mailerGateway: MailerGateway,
+        readonly jobQueue: JobQueue
     ) {
         this.messageRepository = orderServiceFactory.messageRepository();
         this.addressRepository = orderServiceFactory.addressRepository();
@@ -34,6 +36,7 @@ export class OrderService {
     }
 
     async applyOrder({ clientEmail = "test@gmail.com", ...input }: ApplyOrderInput): Promise<void> {
+        await this.jobQueue.postOnQueue("LogJob", "JOB CHEGOU");
         const currentDate = this.clock.getCurrentDate();
         const sequence = await this.orderRepository.getSequence();
         const order = new Order(input.documentTo, currentDate, sequence);
@@ -72,15 +75,19 @@ export class OrderService {
             "Pedido Aplicado",
             "Seu Pedido foi aplicado com sucesso!"
         );
-        const output = await this.mailerGateway.send({
+        const output = this.mailerGateway.send({
             body: message.body,
             from: message.from,
             to: message.to,
             subject: message.subject,
         });
-        if (output.status === "sended") {
-            await this.messageRepository.save(message);
-        }
+
+        output.then(async (res) => {
+            if (res.status === "sended") {
+                await this.messageRepository.save(message);
+            }
+        });
+
         await this.orderRepository.persiste(order);
         await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
         // Order required

@@ -14,7 +14,11 @@ import { sleep } from "../util/sleep";
 import { Address } from "@/domain/entity/Address";
 import { MailerGateway } from "@/application/interfaces/MailerGateway";
 import { NodeMailerAdapter } from "@/infra/gateways/NodeMailerAdapter";
-import exp from "constants";
+import { BullMqAdapter } from "@/infra/backgroundJobs/BullMqAdpter";
+import { JobQueueController } from "@/infra/backgroundJobs/JobQueueController";
+import { JobQueue } from "@/application/interfaces/JobQueue";
+import { LogJob } from "@/infra/backgroundJobs/jobs/LogJob";
+import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -42,6 +46,11 @@ let orderServiceFactory: OrderServiceFactory;
 let mailerGateway: MailerGateway;
 let queue: Queue;
 
+const bullMqAdapter = new BullMqAdapter(new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"));
+bullMqAdapter.addJobs(new LogJob());
+const controller = new JobQueueController(bullMqAdapter);
+controller.process();
+
 beforeEach(async () => {
     await knexClear.clean(knexConnection, {
         mode: "delete",
@@ -56,7 +65,8 @@ beforeEach(async () => {
     clock.setCurrentDate(new Date("2023-10-10"));
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
-    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, mailerGateway);
+
+    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, mailerGateway, bullMqAdapter);
 });
 
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
@@ -94,13 +104,14 @@ test("Deve ser possível solicitar um pedido e disparar um email.", async functi
     await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
     await sleep();
 
-    const message = await orderServiceFactory.messageRepository().getById("1235");
-    expect(message.body).toBe("Seu Pedido foi aplicado com sucesso!");
-    expect(message.getId()).toBe("1235");
     const output = await orderService.getOrder("81307907008");
     expect(output.discount).toBe(1430.4);
     expect(output.taxes).toBe(1730);
     expect(output.totalPrice).toBe(5721.6);
+    await sleep(3000);
+    const message = await orderServiceFactory.messageRepository().getById("1235");
+    expect(message.body).toBe("Seu Pedido foi aplicado com sucesso!");
+    expect(message.getId()).toBe("1235");
 });
 
 afterAll(async () => {
