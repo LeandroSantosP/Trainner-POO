@@ -16,6 +16,8 @@ import { MailerGatewayJobHandler } from "./application/jobsHandlers/MailerGatewa
 
 dovEnv.config();
 
+// add-comment
+
 async function main() {
     const bullMqAdapter = new BullMqBackgroundJob(
         new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81")
