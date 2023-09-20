@@ -1,6 +1,6 @@
-import { Job } from "./Job";
+import { Job } from "@/infra/backgroundJobs/jobs/Job";
 
-export class LogJob implements Job {
+export class LogJobHandler implements Job {
     jobName: string = "LogJob";
     opts?: any;
     constructor() {}

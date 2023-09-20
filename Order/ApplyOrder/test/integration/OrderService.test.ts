@@ -14,11 +14,10 @@ import { sleep } from "../util/sleep";
 import { Address } from "@/domain/entity/Address";
 import { MailerGateway } from "@/application/interfaces/MailerGateway";
 import { NodeMailerAdapter } from "@/infra/gateways/NodeMailerAdapter";
-import { BullMqAdapter } from "@/infra/backgroundJobs/BullMqAdpter";
-import { JobQueueController } from "@/infra/backgroundJobs/JobQueueController";
-import { JobQueue } from "@/application/interfaces/JobQueue";
-import { LogJob } from "@/infra/backgroundJobs/jobs/LogJob";
+import { BullMqBackgroundJob } from "@/infra/backgroundJobs/BullMqBackgroundJob";
+import { LogJobHandler } from "@/application/jobsHandlers/LogJobHandler";
 import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
+import { MailerGatewayJobHandler } from "@/application/jobsHandlers/MailerGatewayJobHandler";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -46,10 +45,9 @@ let orderServiceFactory: OrderServiceFactory;
 let mailerGateway: MailerGateway;
 let queue: Queue;
 
-const bullMqAdapter = new BullMqAdapter(new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"));
-bullMqAdapter.addJobs(new LogJob());
-const controller = new JobQueueController(bullMqAdapter);
-controller.process();
+const bullMqAdapter = new BullMqBackgroundJob(
+    new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81")
+);
 
 beforeEach(async () => {
     await knexClear.clean(knexConnection, {
@@ -65,8 +63,9 @@ beforeEach(async () => {
     clock.setCurrentDate(new Date("2023-10-10"));
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
-
-    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, mailerGateway, bullMqAdapter);
+    bullMqAdapter.addJobs(new LogJobHandler());
+    bullMqAdapter.addJobs(new MailerGatewayJobHandler(mailerGateway, orderServiceFactory.messageRepository()));
+    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, bullMqAdapter);
 });
 
 test("Deve ser possível solicitar um pedido com 3 items", async function () {

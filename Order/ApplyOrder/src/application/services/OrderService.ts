@@ -10,33 +10,26 @@ import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AppError } from "@/domain/entity/AppError";
 import { Queue } from "@/infra/queue/Queue";
 import { OrderApplied } from "@/infra/events/OrderApplied";
-import { MailerGateway } from "../interfaces/MailerGateway";
-import { MessageRepository } from "../repository/MessageRepository";
-import { Message } from "@/domain/entity/Message";
 import { JobQueue } from "../interfaces/JobQueue";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
     readonly couponRepository: CouponRepository;
     readonly addressRepository: AddressRepository;
-    readonly messageRepository: MessageRepository;
 
     constructor(
         orderServiceFactory: OrderServiceFactory,
         readonly productGateway: ProductGateway,
         readonly clock: Clock,
         readonly queue: Queue,
-        readonly mailerGateway: MailerGateway,
         readonly jobQueue: JobQueue
     ) {
-        this.messageRepository = orderServiceFactory.messageRepository();
         this.addressRepository = orderServiceFactory.addressRepository();
         this.orderRepository = orderServiceFactory.orderRepository();
         this.couponRepository = orderServiceFactory.couponRepository();
     }
 
     async applyOrder({ clientEmail = "test@gmail.com", ...input }: ApplyOrderInput): Promise<void> {
-        await this.jobQueue.postOnQueue("LogJob", "JOB CHEGOU");
         const currentDate = this.clock.getCurrentDate();
         const sequence = await this.orderRepository.getSequence();
         const order = new Order(input.documentTo, currentDate, sequence);
@@ -68,26 +61,14 @@ export class OrderService {
         const distance = DistanceCalculator.execute(addressTo.cord, addressFrom.cord);
         const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
-        const message = new Message(
-            "1235",
-            "companyName@email.com",
-            clientEmail,
-            "Pedido Aplicado",
-            "Seu Pedido foi aplicado com sucesso!"
-        );
-        const output = this.mailerGateway.send({
-            body: message.body,
-            from: message.from,
-            to: message.to,
-            subject: message.subject,
-        });
 
-        output.then(async (res) => {
-            if (res.status === "sended") {
-                await this.messageRepository.save(message);
-            }
+        await this.jobQueue.postOnQueue("MailerGatewayJob", {
+            id: "1235",
+            from: "companyName@email.com",
+            to: clientEmail,
+            subject: "Pedido Aplicado",
+            body: "Seu Pedido foi aplicado com sucesso!",
         });
-
         await this.orderRepository.persiste(order);
         await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
         // Order required

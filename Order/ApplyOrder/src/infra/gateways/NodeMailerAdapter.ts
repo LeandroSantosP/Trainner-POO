@@ -11,8 +11,6 @@ export class NodeMailerAdapter implements MailerGateway {
         status: "sended" | "failed";
     }> {
         try {
-            console.log(content);
-
             const info = await this.transporter.sendMail({
                 from: content.from, // sender address
                 to: content.to, // list of receivers
@@ -20,7 +18,7 @@ export class NodeMailerAdapter implements MailerGateway {
                 text: content.body, // plain text body
                 html: content.html, // html body
             });
-            console.log("Message sent: %s", info.messageId);
+            console.log("Message sent: %s");
             return {
                 status: "sended",
             };

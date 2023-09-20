@@ -3,7 +3,7 @@ import { Job } from "./jobs/Job";
 import { RedisConnection } from "./RedisConnection";
 import { JobQueue } from "../../application/interfaces/JobQueue";
 
-export class BullMqAdapter implements JobQueue {
+export class BullMqBackgroundJob implements JobQueue {
     private readonly jobs: { job: Job; queue: Queue; worker: Worker }[] = [];
 
     constructor(readonly connection: RedisConnection) {}

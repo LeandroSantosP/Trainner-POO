@@ -6,7 +6,7 @@ import { OrderRepositoryKnex } from "../repository/OrderRepositoryKnex";
 import { AddressRepository } from "@/application/repository/AddressRepository";
 import { AddressRepositoryKnex } from "../repository/AddressRepositoryKnex";
 import { MessageRepository } from "@/application/repository/MessageRepository";
-import { MessageRepositoryMemory } from "../repository/MailerRepositoryMemory";
+import { MessageRepositoryMemory } from "../repository/MessageRepositoryMemory";
 
 export class OrderServiceFactoryDatabase implements OrderServiceFactory {
     messageRepository(): MessageRepository {
