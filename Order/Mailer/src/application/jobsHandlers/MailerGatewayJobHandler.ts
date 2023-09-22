@@ -2,15 +2,21 @@ import { MailerGateway } from "@/application/interfaces/MailerGateway";
 import { Job } from "../../infra/backgroundJobs/jobs/Job";
 import { MessageRepository } from "@/application/repository/MessageRepository";
 import { Message } from "@/domain/entity/Message";
+import { Queue } from "@/infra/queue/Queue";
 
-export class MailerGatewayJobHandler implements Job {
+export class MailerGatewayJobHandler<Ops> implements Job {
     jobName = "MailerGatewayJob";
-    opts?: any;
+    opts?: Ops;
 
-    constructor(readonly mailerGateway: MailerGateway, readonly messageRepository: MessageRepository) {}
+    constructor(
+        readonly mailerGateway: MailerGateway,
+        readonly messageRepository: MessageRepository,
+        readonly queue: Queue
+    ) {}
 
     async handle(data: any): Promise<void> {
         const message = new Message(data.id, data.from, data.to, data.subject, data.body);
+
         const output = await this.mailerGateway.send({
             body: message.body,
             from: message.from,
@@ -20,6 +26,10 @@ export class MailerGatewayJobHandler implements Job {
 
         if (output.status === "sended") {
             await this.messageRepository.save(message);
+        } else {
+            await this.queue.publisher("MessageFailed", {
+                eventName: "MessageFailed",
+            });
         }
     }
 }

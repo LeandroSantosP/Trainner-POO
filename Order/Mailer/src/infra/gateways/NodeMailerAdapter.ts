@@ -11,7 +11,7 @@ export class NodeMailerAdapter implements MailerGateway {
         status: "sended" | "failed";
     }> {
         try {
-            const info = await this.transporter.sendMail({
+            await this.transporter.sendMail({
                 from: content.from, // sender address
                 to: content.to, // list of receivers
                 subject: content.subject, // Subject line

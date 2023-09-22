@@ -16,6 +16,10 @@ export class MessageRepositoryMemory implements MessageRepository {
     async save(mailer: Message): Promise<void> {
         this.messages.push(mailer);
     }
+
+    async listByToEmail(email: string): Promise<Message[]> {
+        return this.messages.filter((message) => message.to === email);
+    }
     async getById(id: string): Promise<Message> {
         const message = this.messages.find((message) => message.getId() === id);
         if (!message) throw new AppError("Message not found");

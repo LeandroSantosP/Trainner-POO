@@ -10,7 +10,6 @@ import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AppError } from "@/domain/entity/AppError";
 import { Queue } from "@/infra/queue/Queue";
 import { OrderApplied } from "@/infra/events/OrderApplied";
-import { JobQueue } from "../interfaces/JobQueue";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -21,8 +20,7 @@ export class OrderService {
         orderServiceFactory: OrderServiceFactory,
         readonly productGateway: ProductGateway,
         readonly clock: Clock,
-        readonly queue: Queue,
-        readonly jobQueue: JobQueue
+        readonly queue: Queue
     ) {
         this.addressRepository = orderServiceFactory.addressRepository();
         this.orderRepository = orderServiceFactory.orderRepository();
@@ -39,7 +37,6 @@ export class OrderService {
         }
         const productIds = input.items.map((item) => item.productId);
         const products = await this.productGateway.getProducts(productIds);
-
         const productDimensions = products.map((product) => ({
             density: product.density,
             volume: product.volume,
@@ -62,15 +59,8 @@ export class OrderService {
         const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
 
-        await this.jobQueue.postOnQueue("MailerGatewayJob", {
-            id: "1235",
-            from: "companyName@email.com",
-            to: clientEmail,
-            subject: "Pedido Aplicado",
-            body: "Seu Pedido foi aplicado com sucesso!",
-        });
         await this.orderRepository.persiste(order);
-        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items, clientEmail));
         // Order required
     }
 

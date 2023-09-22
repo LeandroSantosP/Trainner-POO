@@ -36,7 +36,7 @@ beforeEach(async () => {
 
 test("Deve ser possível aplicar para um pedido (checkout)", async function () {
     await axios.post("http://localhost:3002/applyOrder", applyOrderInput);
-    await sleep(400);
+    await sleep(4000);
     const document = "77479815115";
     const response = await axios.get(`http://localhost:3002/getOrder/${document}`);
     const output = response.data;

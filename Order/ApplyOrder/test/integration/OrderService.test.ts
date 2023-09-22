@@ -13,11 +13,9 @@ import knexClear from "knex-cleaner";
 import { sleep } from "../util/sleep";
 import { Address } from "@/domain/entity/Address";
 import { MailerGateway } from "@/application/interfaces/MailerGateway";
-import { NodeMailerAdapter } from "@/infra/gateways/NodeMailerAdapter";
 import { BullMqBackgroundJob } from "@/infra/backgroundJobs/BullMqBackgroundJob";
 import { LogJobHandler } from "@/application/jobsHandlers/LogJobHandler";
 import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
-import { MailerGatewayJobHandler } from "@/application/jobsHandlers/MailerGatewayJobHandler";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -55,7 +53,6 @@ beforeEach(async () => {
         restartIdentity: true,
         ignoreTables: ["product"],
     });
-    mailerGateway = new NodeMailerAdapter();
     queue = new RabbitMqAdapter();
     await queue.connect();
     clock = new FakeClock();
@@ -64,8 +61,7 @@ beforeEach(async () => {
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
     bullMqAdapter.addJobs(new LogJobHandler());
-    bullMqAdapter.addJobs(new MailerGatewayJobHandler(mailerGateway, orderServiceFactory.messageRepository()));
-    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue, bullMqAdapter);
+    orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
 });
 
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
@@ -88,29 +84,11 @@ test("Deve ser possível solicitar um pedido com 2 items e aplicar um cupom de d
     clock.setCurrentDate(new Date("2023-10-10"));
     await orderServiceFactory.couponRepository().persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
     await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
-    await sleep();
+    await sleep(4000);
     const output = await orderService.getOrder("81307907008");
     expect(output.discount).toBe(1430.4);
     expect(output.taxes).toBe(1730);
     expect(output.totalPrice).toBe(5721.6);
-});
-
-test("Deve ser possível solicitar um pedido e disparar um email.", async function () {
-    await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
-    await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
-    clock.setCurrentDate(new Date("2023-10-10"));
-    await orderServiceFactory.couponRepository().persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
-    await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
-    await sleep();
-
-    const output = await orderService.getOrder("81307907008");
-    expect(output.discount).toBe(1430.4);
-    expect(output.taxes).toBe(1730);
-    expect(output.totalPrice).toBe(5721.6);
-    await sleep(3000);
-    const message = await orderServiceFactory.messageRepository().getById("1235");
-    expect(message.body).toBe("Seu Pedido foi aplicado com sucesso!");
-    expect(message.getId()).toBe("1235");
 });
 
 afterAll(async () => {
