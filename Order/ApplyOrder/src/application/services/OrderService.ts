@@ -27,7 +27,7 @@ export class OrderService {
         this.couponRepository = orderServiceFactory.couponRepository();
     }
 
-    async applyOrder(input: ApplyOrderInput): Promise<void> {
+    async applyOrder({ clientEmail = "test@gmail.com", ...input }: ApplyOrderInput): Promise<void> {
         const currentDate = this.clock.getCurrentDate();
         const sequence = await this.orderRepository.getSequence();
         const order = new Order(input.documentTo, currentDate, sequence);
@@ -37,7 +37,6 @@ export class OrderService {
         }
         const productIds = input.items.map((item) => item.productId);
         const products = await this.productGateway.getProducts(productIds);
-
         const productDimensions = products.map((product) => ({
             density: product.density,
             volume: product.volume,
@@ -59,8 +58,9 @@ export class OrderService {
         const distance = DistanceCalculator.execute(addressTo.cord, addressFrom.cord);
         const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
+
         await this.orderRepository.persiste(order);
-        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items, clientEmail));
         // Order required
     }
 
@@ -91,6 +91,7 @@ type GetOrderOutPut = {
 type ApplyOrderInput = {
     documentTo: string;
     documentFrom: string;
+    clientEmail?: string;
     coupon?: string;
     items: Array<{ productId: string; quantity: number }>;
 };

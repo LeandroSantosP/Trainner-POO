@@ -2,7 +2,6 @@ import { OrderService } from "@/application";
 import { OrderServiceFactory } from "@/application/factory/OrderServiceFactory";
 import { Clock } from "@/application/interfaces/Clock";
 import { FakeClock } from "@/domain/domainServices/FakeClock";
-import { Address } from "@/domain/entity/Address";
 import { Coupon } from "@/domain/entity/Coupon";
 import knexConnection from "@/infra/database/knexfile";
 import { OrderServiceFactoryDatabase } from "@/infra/factory/OrderServiceFactoryDatabase";
@@ -11,6 +10,12 @@ import { AxiosHttpClient } from "@/infra/httpClient/AxiosHttpClient";
 import { Queue } from "@/infra/queue/Queue";
 import { RabbitMqAdapter } from "@/infra/queue/RabbitMqAdapter";
 import knexClear from "knex-cleaner";
+import { sleep } from "../util/sleep";
+import { Address } from "@/domain/entity/Address";
+import { MailerGateway } from "@/application/interfaces/MailerGateway";
+import { BullMqBackgroundJob } from "@/infra/backgroundJobs/BullMqBackgroundJob";
+import { LogJobHandler } from "@/application/jobsHandlers/LogJobHandler";
+import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -35,8 +40,12 @@ let applyOrderInput = {
 let clock: Clock;
 let orderService: OrderService;
 let orderServiceFactory: OrderServiceFactory;
-
+let mailerGateway: MailerGateway;
 let queue: Queue;
+
+const bullMqAdapter = new BullMqBackgroundJob(
+    new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81")
+);
 
 beforeEach(async () => {
     await knexClear.clean(knexConnection, {
@@ -51,10 +60,15 @@ beforeEach(async () => {
     clock.setCurrentDate(new Date("2023-10-10"));
     const httpClient = new AxiosHttpClient();
     const productGateway = new ProductGateway(httpClient);
+    bullMqAdapter.addJobs(new LogJobHandler());
     orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
 });
+
 test("Deve ser possível solicitar um pedido com 3 items", async function () {
-    await orderService.applyOrder(applyOrderInput);
+    await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
+    await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
+    await orderService.applyOrder({ ...applyOrderInput });
+    await sleep();
     clock.setCurrentDate(new Date("2023-10-10"));
     const output = await orderService.getOrder("81307907008");
     expect(output.orderCode).toBe("202300000001");
@@ -65,13 +79,16 @@ test("Deve ser possível solicitar um pedido com 3 items", async function () {
 });
 
 test("Deve ser possível solicitar um pedido com 2 items e aplicar um cupom de desconto", async function () {
+    await orderServiceFactory.addressRepository().save(new Address("81307907008", "", "", "", 40.7128, -74.006));
+    await orderServiceFactory.addressRepository().save(new Address("85878184656", "", "", "", 34.0522, -118.2437));
     clock.setCurrentDate(new Date("2023-10-10"));
     await orderServiceFactory.couponRepository().persiste(new Coupon("VALE20", 20, new Date("2023-11-01")));
     await orderService.applyOrder({ ...applyOrderInput, coupon: "VALE20" });
+    await sleep(4000);
     const output = await orderService.getOrder("81307907008");
     expect(output.discount).toBe(1430.4);
-    expect(output.totalPrice).toBe(5721.6);
     expect(output.taxes).toBe(1730);
+    expect(output.totalPrice).toBe(5721.6);
 });
 
 afterAll(async () => {

@@ -38,7 +38,6 @@ export class ProductRepositoryKnex implements ProductRepository {
             width: productData.width,
             fare: productData.fare,
         });
-
         return product;
     }
     async close(): Promise<void> {
