@@ -2,8 +2,8 @@
 /dist
 /node_modules
 /coverage
-/db_backup
-/migrations
+db_backup
+migrations
 
 # Logs
 logs

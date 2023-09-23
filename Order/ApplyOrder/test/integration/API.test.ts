@@ -39,11 +39,11 @@ beforeEach(async () => {
 test("Deve ser possível aplicar para um pedido (checkout)", async function () {
     await axios.post("http://localhost:3002/applyOrder", applyOrderInput);
     await sleep();
-    // const document = "81307907008";
-    // const response = await axios.get(`http://localhost:3002/getOrder/${document}`);
-    // const output = response.data;
-    // expect(output.orderCode).toBe("202300000001");
-    // expect(output.document).toBe("81307907008");
-    // expect(output.orderStatus).toBe("open");
-    // expect(output.totalPrice).toBe(7152);
+    const document = "81307907008";
+    const response = await axios.get(`http://localhost:3002/getOrder/${document}`);
+    const output = response.data;
+    expect(output.orderCode).toBe("202300000001");
+    expect(output.document).toBe("81307907008");
+    expect(output.orderStatus).toBe("open");
+    expect(output.totalPrice).toBe(7152);
 });
