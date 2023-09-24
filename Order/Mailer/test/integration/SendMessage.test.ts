@@ -27,7 +27,7 @@ async function sleep(timeout: number = 300) {
         }, timeout);
     });
 }
-test.only("Deve disparar uma message quando o pedido for lançado", async function () {
+test("Deve disparar uma message quando o pedido for lançado", async function () {
     await expect(
         mailerService.send({
             clientEmail: "test@test.com",

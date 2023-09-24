@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { AppError } from "../entity/AppError";
 import { Message } from "../entity/Message";
 
@@ -24,8 +25,8 @@ export class MessageBuilder {
         this.body = body;
         return this;
     }
-    addId(id: string) {
-        this.id = id;
+    addId(id?: string) {
+        this.id = id || randomUUID();
         return this;
     }
     build() {

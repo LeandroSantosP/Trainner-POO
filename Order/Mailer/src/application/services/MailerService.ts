@@ -5,6 +5,8 @@ export class MailerService {
     constructor(readonly jobQueue: JobQueue, readonly messageRepository: MessageRepository) {}
 
     async send(input: SendInput): Promise<void> {
+        console.log(input);
+
         if (input.eventName === "OrderApplied") {
             let message = {
                 from: "company.name@gmail.com",

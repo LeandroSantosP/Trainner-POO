@@ -1,5 +1,5 @@
 import { Queue, Worker, JobsOptions } from "bullmq";
-import { Job } from "./jobs/Job";
+import { Job } from "../../application/interfaces/Job";
 import { RedisConnection } from "./RedisConnection";
 import { JobQueue } from "../../application/interfaces/JobQueue";
 
@@ -38,7 +38,7 @@ export class BullMqBackgroundJob implements JobQueue {
                 console.log("failed", error.message, currentJob?.data);
             });
             worker.on("completed", (currentJob, error) => {
-                console.log("completed", error, currentJob.data);
+                console.log("completed", currentJob.data);
             });
         }
     }
