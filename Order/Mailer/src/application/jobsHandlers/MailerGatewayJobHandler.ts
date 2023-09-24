@@ -14,7 +14,7 @@ export class MailerGatewayJobHandler<Ops> implements Job {
         readonly queue: Queue
     ) {}
 
-    async handle(data: any): Promise<void> {
+    async handle(data: Input): Promise<void> {
         const message = new Message(data.id, data.from, data.to, data.subject, data.body);
 
         const output = await this.mailerGateway.send({
@@ -33,3 +33,11 @@ export class MailerGatewayJobHandler<Ops> implements Job {
         }
     }
 }
+
+type Input = {
+    id: string;
+    from: string;
+    to: string;
+    subject: string;
+    body: string;
+};

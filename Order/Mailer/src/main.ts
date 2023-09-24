@@ -8,6 +8,7 @@ import { BullMqBackgroundJob } from "./infra/backgroundJobs/BullMqBackgroundJob"
 import { RedisConnection } from "./infra/backgroundJobs/RedisConnection";
 import { NodeMailerAdapter } from "./infra/gateways/NodeMailerAdapter";
 import { MailerGatewayJobHandler } from "./application/jobsHandlers/MailerGatewayJobHandler";
+import { JobsOptions } from "bullmq";
 dot.config();
 
 async function init() {
@@ -19,11 +20,12 @@ async function init() {
 
     const messageRepository = MessageRepositoryMemory.getInstance();
     const mailerGateway = new NodeMailerAdapter();
-    const mailerHandler = new MailerGatewayJobHandler(mailerGateway, messageRepository, queue);
+    const mailerHandler = new MailerGatewayJobHandler<JobsOptions>(mailerGateway, messageRepository, queue);
     jobQueue.addJobs(mailerHandler);
     const mailerService = new MailerService(jobQueue, messageRepository);
 
     new QueueController(queue, mailerService);
+    jobQueue.process();
     console.log("Mailer On");
 }
 init();

@@ -1,14 +1,21 @@
+import { ApplicationEvent } from "@/application/interfaces/ApplicationEvent";
 import { MailerGatewayJobHandler } from "@/application/jobsHandlers/MailerGatewayJobHandler";
 import { MailerService } from "@/application/services/MailerService";
 import { BullMqBackgroundJob } from "@/infra/backgroundJobs/BullMqBackgroundJob";
 import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
 import { NodeMailerAdapter } from "@/infra/gateways/NodeMailerAdapter";
+import { Queue } from "@/infra/queue/Queue";
 import { MessageRepositoryMemory } from "@/infra/repository/MessageRepositoryMemory";
 const messageRepository = MessageRepositoryMemory.getInstance();
 
 const jobQueue = new BullMqBackgroundJob(new RedisConnection("127.0.0.1", 6379, "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"));
 const mailerGateway = new NodeMailerAdapter();
-const mailerHandler = new MailerGatewayJobHandler(mailerGateway, messageRepository);
+const queue: Queue = {
+    async connect(): Promise<void> {},
+    async publisher(queueName: string, data: ApplicationEvent): Promise<void> {},
+    async on(queueName: string, callback: Function): Promise<void> {},
+};
+const mailerHandler = new MailerGatewayJobHandler(mailerGateway, messageRepository, queue);
 jobQueue.addJobs(mailerHandler);
 const mailerService = new MailerService(jobQueue, messageRepository);
 
@@ -20,13 +27,10 @@ async function sleep(timeout: number = 300) {
     });
 }
 jobQueue.process();
-
-test("Deve disparar uma message", async function () {
+test("Deve disparar uma message quando o pedido for lançado", async function () {
     await mailerService.send({
-        body: "Test",
-        from: "john.doe@gmail.com",
-        to: "test@test.com",
-        subject: "Test",
+        clientEmail: "test@test.com",
+        eventName: "OrderApplied",
     });
     await sleep(4000);
     const output = await mailerService.getMessagesByEmail("test@test.com");

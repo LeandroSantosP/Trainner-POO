@@ -1,4 +1,3 @@
-import { Message } from "@/domain/entity/Message";
 import { JobQueue } from "../interfaces/JobQueue";
 import { MessageRepository } from "../repository/MessageRepository";
 
@@ -7,12 +6,12 @@ export class MailerService {
 
     async send(input: SendInput): Promise<void> {
         if (input.eventName === "OrderApplied") {
-            let message = new Message(
-                "company.name@gmail.com",
-                input.clientEmail,
-                "OrderApplied",
-                "Sua comprar foi efetuada com sucesso"
-            );
+            let message = {
+                from: "company.name@gmail.com",
+                to: input.clientEmail,
+                subject: "Pedido",
+                body: "Sua comprar foi efetuada com sucesso",
+            };
             await this.jobQueue.postOnQueue("MailerGatewayJob", message);
         }
     }
