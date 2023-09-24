@@ -27,7 +27,8 @@ export class BullMqBackgroundJob implements JobQueue {
         if (!job) {
             throw new Error(`Job ${jobName} not found`);
         }
-        const response = await job.queue.add(jobName, data, opts);
+
+        await job.queue.add(jobName, data, opts);
     }
 
     process() {
@@ -36,7 +37,6 @@ export class BullMqBackgroundJob implements JobQueue {
             worker.on("failed", (currentJob, error) => {
                 console.log("failed", error.message, currentJob?.data);
             });
-
             worker.on("completed", (currentJob, error) => {
                 console.log("completed", error, currentJob.data);
             });

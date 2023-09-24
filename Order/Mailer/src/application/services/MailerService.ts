@@ -12,13 +12,25 @@ export class MailerService {
                 subject: "Pedido",
                 body: "Sua comprar foi efetuada com sucesso",
             };
+
             await this.jobQueue.postOnQueue("MailerGatewayJob", message);
         }
     }
 
     async getMessagesByEmail(email: string): Promise<GetMessagesByEmailOutput> {
         const messages = await this.messageRepository.listByToEmail(email);
-        return messages;
+
+        const output: GetMessagesByEmailOutput = [];
+
+        for (const message of messages) {
+            output.push({
+                from: message.from.getValue(),
+                to: message.to.getValue(),
+                subject: message.subject,
+                body: message.body,
+            });
+        }
+        return output;
     }
 }
 

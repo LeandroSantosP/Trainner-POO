@@ -15,15 +15,13 @@ export class MailerGatewayJobHandler<Ops> implements Job {
     ) {}
 
     async handle(data: Input): Promise<void> {
-        const message = new Message(data.id, data.from, data.to, data.subject, data.body);
-
+        const message = new Message(data.from, data.to, data.subject, data.body, data.id);
         const output = await this.mailerGateway.send({
             body: message.body,
-            from: message.from,
-            to: message.to,
+            from: message.from.getValue(),
+            to: message.to.getValue(),
             subject: message.subject,
         });
-
         if (output.status === "sended") {
             await this.messageRepository.save(message);
         } else {

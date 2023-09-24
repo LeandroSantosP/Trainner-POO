@@ -13,12 +13,14 @@ export class MessageRepositoryMemory implements MessageRepository {
         return MessageRepositoryMemory.instance;
     }
 
-    async save(mailer: Message): Promise<void> {
-        this.messages.push(mailer);
+    async save(message: Message): Promise<void> {
+        console.log(message);
+
+        this.messages.push(message);
     }
 
     async listByToEmail(email: string): Promise<Message[]> {
-        return this.messages.filter((message) => message.to === email);
+        return this.messages.filter((message) => message.to.getValue() === email);
     }
     async getById(id: string): Promise<Message> {
         const message = this.messages.find((message) => message.getId() === id);
