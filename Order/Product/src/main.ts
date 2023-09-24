@@ -1,6 +1,5 @@
 import dot from "dotenv";
 import { ProductService } from "./application/services/ProductService";
-import { ProductRepositoryMemory } from "./infra/repository/ProductRepositoryMemory";
 import { RestController } from "./infra/controller/RestController";
 import { ExpressServerAdapter } from "./infra/http/ExpressServerAdapter";
 import { ProductRepositoryKnex } from "./infra/repository/ProductRepositoryKnex";
