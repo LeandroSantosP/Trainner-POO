@@ -1,10 +1,12 @@
-import dovEnv from "dotenv";
+import { Elysia } from "elysia";
 
-dovEnv.config();
-console.log();
+const app = new Elysia();
 
 async function main() {
-    console.log("running!!");
+    app.state("version", 1)
+        .decorate("my_id", () => "1234")
+        .get("/version", ({ my_id, store: { version } }) => `${version} ${my_id()}`);
+    app.listen(3000);
 }
 
 main();
