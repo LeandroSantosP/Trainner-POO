@@ -1,13 +1,15 @@
-# typescript-project-boilerplate
+# Elysia with Bun runtime
 
-My initial typescript project boilerplate
-
+## Getting Started
+To get started with this template, simply paste this command into your terminal:
 ```bash
-
-mkdir yourprojectname
-cd yourprojectname
-git clone https://github.com/augustoedt123/typescript-project-boilerplate .
-rm -rf .git
-rm -rf README.md
-
+bun create elysia ./elysia-example
 ```
+
+## Development
+To start the development server run:
+```bash
+bun run dev
+```
+
+Open http://localhost:3000/ with your browser to see the result.

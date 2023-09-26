@@ -1,31 +1,15 @@
 {
-  "name": "project",
-  "version": "1.0.0",
-  "description": "project desc",
-  "main": "/src/main.ts",
+  "name": "hi-elysia",
+  "version": "1.0.50",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
-    "build": "yarn && rimraf dist/ && tsc",
-    "start": "yarn build && node dist/src/main.js",
-    "test": "jest --coverage=false"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
   },
-  "_moduleAliases": {
-    "@/*": [
-        "./dist/src/*"
-      ],
-      "@/application/*": [
-        "./dist/src/application/*"
-      ],
-      "@/infra/*": [
-        "./dist/src/infra/*"
-      ],
-      "@/domain/*": [
-        "./dist/src/domain/*"
-      ]
+  "dependencies": {
+    "elysia": "latest"
   },
-  "author": "Leandro Pereira Dos Santos",
-  "license": "ISC",
   "devDependencies": {
+    "bun-types": "latest",
     "@types/jest": "^29.5.2",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
@@ -42,10 +26,5 @@
     "tsx": "^3.12.7",
     "typescript": "*"
   },
-  "dependencies": {
-    "dotenv": "^16.3.1",
-    "module-alias": "^2.2.3",
-    "pino": "^8.5.0",
-    "pino-pretty": "^9.1.0"
-  }
+  "module": "src/index.js"
 }
