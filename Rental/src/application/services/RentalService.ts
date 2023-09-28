@@ -16,12 +16,11 @@ export class RentalService {
 
         const carRental = CarRental.create({
             carPlate: car.plate,
-            carStatus: car.status,
             clientId: input.client_id,
             clock: this.clock,
+            carStatus: car.status,
             rentalReturnDate: input.return_rental_date,
         });
-
         // calculate payment
 
         await this.rentRepository.persiste(carRental);
