@@ -3,12 +3,18 @@ import { Clock } from "../interfaces/Clock";
 import { CarRepository } from "../repository/CarRepository";
 import { CarRentRepository } from "../repository/CarRentRepository";
 import { GetRentalOutput, RentInput } from "./CarServiceTypes";
+import { PaymentGateway } from "../interfaces/PaymentGateway";
+import { TransactionService } from "./TransactionService";
 
 export class RentalService {
+    clientDoc = "123456789";
+    method = "boleto";
     constructor(
+        readonly paymentGateway: PaymentGateway,
         readonly clock: Clock,
         readonly rentRepository: CarRentRepository,
-        readonly carRepository: CarRepository
+        readonly carRepository: CarRepository,
+        readonly transactionService: TransactionService
     ) {}
 
     async rent(input: RentInput) {
@@ -21,9 +27,26 @@ export class RentalService {
             carStatus: car.status,
             rentalReturnDate: input.return_rental_date,
         });
-        // calculate payment
 
         await this.rentRepository.persiste(carRental);
+
+        const { penaltyFare, totalPrice } = carRental.finishedRent();
+
+        const output = await this.paymentGateway.pay(totalPrice);
+
+        if (output.status === "paid") {
+            carRental.updateStatus().paymentAprove();
+            await this.transactionService.makeTransaction({
+                amount: totalPrice,
+                fare: penaltyFare,
+                method: this.method,
+                document: this.clientDoc,
+            });
+            await this.rentRepository.update(carRental);
+        } else if (output.status === "rejected") {
+            this.rentRepository.update(carRental);
+            carRental.updateStatus().paymentReject();
+        }
     }
 
     async getRental(client_id: string): Promise<GetRentalOutput> {
