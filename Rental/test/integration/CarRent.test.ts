@@ -1,7 +1,6 @@
 import { PaymentGateway } from "@/application/interfaces/PaymentGateway";
 import { CarRentRepository } from "@/application/repository/CarRentRepository";
 import { CarRepository } from "@/application/repository/CarRepository";
-import { TransactionRepository } from "@/application/repository/TransactionRepository";
 import { RentalService } from "@/application/services/RentalService";
 import { TransactionService } from "@/application/services/TransactionService";
 import { Car } from "@/domain/Car";
