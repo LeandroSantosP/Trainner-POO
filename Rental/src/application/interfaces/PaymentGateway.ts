@@ -1,5 +1,5 @@
 export interface PaymentGateway {
-    pay(amount: number): Promise<Output>;
+    pay(input: { amount: number; token: string }): Promise<Output>;
 }
 
 type Output = {

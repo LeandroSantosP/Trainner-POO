@@ -15,7 +15,6 @@ export class Client {
         cpf: string
     ) {
         if (age < 18) throw new Error("Client must be at least 18 years old");
-
         this.email = new Email(email);
         this.cpf = new Cpf(cpf);
     }

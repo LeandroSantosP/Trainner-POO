@@ -2,7 +2,7 @@ import { CarRental } from "@/domain/CarRental";
 import { Clock } from "../interfaces/Clock";
 import { CarRepository } from "../repository/CarRepository";
 import { CarRentRepository } from "../repository/CarRentRepository";
-import { GetRentalOutput, RentInput } from "./CarServiceTypes";
+import { GetRentalOutput, PaymentRentalInput, RentInput } from "./CarServiceTypes";
 import { PaymentGateway } from "../interfaces/PaymentGateway";
 import { TransactionService } from "./TransactionService";
 
@@ -17,7 +17,7 @@ export class RentalService {
         readonly transactionService: TransactionService
     ) {}
 
-    async rent(input: RentInput) {
+    async rent(input: RentInput): Promise<void> {
         const car = await this.carRepository.get(input.plate);
 
         const carRental = CarRental.create({
@@ -29,10 +29,14 @@ export class RentalService {
         });
 
         await this.rentRepository.persiste(carRental);
+    }
+
+    async paymentRental(input: PaymentRentalInput) {
+        const carRental = await this.rentRepository.get(input.carPlate);
 
         const { penaltyFare, totalPrice } = carRental.finishedRent();
 
-        const output = await this.paymentGateway.pay(totalPrice);
+        const output = await this.paymentGateway.pay({ amount: totalPrice, token: input.paymentToken });
 
         if (output.status === "paid") {
             carRental.updateStatus().paymentAprove();

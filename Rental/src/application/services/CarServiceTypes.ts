@@ -4,13 +4,6 @@ export type RentInput = {
     return_rental_date: Date;
 };
 
-export type RentOutput = {
-    status: string;
-    car_plate: string;
-    rental_date_end: Date;
-    rental_date_start: Date;
-};
-
 export type GetRentalOutput = {
     status: string;
     car_plate: string;
@@ -18,4 +11,9 @@ export type GetRentalOutput = {
     rental_return_date: Date;
     rentalPeriod: number;
     currentPrice: number;
+};
+
+export type PaymentRentalInput = {
+    carPlate: string;
+    paymentToken: string;
 };

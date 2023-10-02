@@ -16,7 +16,7 @@ let rentalCar: RentalService;
 let transactionService: TransactionService;
 
 const paymentGateway: PaymentGateway = {
-    async pay(amount: number): Promise<{ status: string; tid: string }> {
+    async pay(input: { amount: number; token: string }): Promise<{ status: string; tid: string }> {
         return {
             status: "paid",
             tid: "123456789",
@@ -56,7 +56,7 @@ test("Deve ser possível alugar um carro", async function () {
 
     const output = await rentalCar.getRental("111222333");
 
-    expect(output.status).toBe("payment_aprove");
+    expect(output.status).toBe("waiting_payment");
     expect(output.car_plate).toBe("AAA-3344");
     expect(output.rental_date_end).toBeUndefined();
     expect(output.rental_return_date).toEqual(new Date("2023-06-21T10:00:00"));
@@ -72,7 +72,15 @@ test("Deve ser possível alugar um carro e confirmar um pedido.", async function
         plate: "AAA-3344",
         return_rental_date: new Date("2023-06-21T10:00:00"),
     };
+
     await rentalCar.rent(input);
+
+    const paymentRentalCar = {
+        paymentToken: "123456789",
+        carPlate: "AAA-3344",
+    };
+
+    await rentalCar.paymentRental(paymentRentalCar);
     const output = await rentalCar.getRental("111222333");
     expect(output.status).toBe("payment_aprove");
 });
