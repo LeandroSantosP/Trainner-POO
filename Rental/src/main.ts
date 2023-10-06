@@ -6,6 +6,8 @@ import { CarRentRepositoryMemory } from "./infra/repository/RentRepositoryMemory
 import { CarRepositoryMemory } from "./infra/repository/CarRepositoryMemory.ts";
 import { TransactionService } from "./application/services/TransactionService";
 import { TransactionRepositoryMemory } from "./infra/repository/TransactionRepositoryMemory";
+import { RestController } from "./infra/controller/RestController";
+import { ElysiaHttpServer } from "./infra/http/ElysiaHttpServer";
 
 const app = new Elysia();
 
@@ -19,37 +21,9 @@ const transactionService = new TransactionService(transactionRepository);
 const rentalCarService = new RentalService(paymentGateway, clock, rentalRepository, carRepository, transactionService);
 
 async function main() {
-    app.post("/rentals", async (cpx) => {
-        try {
-            await rentalCarService.rent(cpx.body as any);
-            cpx.set.status = 201;
-            return;
-        } catch (error: any) {
-            cpx.set.status = 500;
-            console.log(error);
-            return {
-                message: "Internal server error.",
-                error: error.message,
-            };
-        }
-    });
-    app.get("/rental/:id", async (cpx) => {
-        try {
-            const output = await rentalCarService.getRental(cpx.params.id);
-            cpx.set.status = 201;
-            return output;
-        } catch (error: any) {
-            cpx.set.status = 500;
-            console.log(error);
-            return {
-                message: "Internal server error.",
-                error: error.message,
-            };
-        }
-    });
-    app.listen(3000, ({ hostname, port }) => {
-        console.log(`Running at http://${hostname}:${port}`);
-    });
+    const httpServer = new ElysiaHttpServer();
+    new RestController(httpServer, rentalCarService);
+    httpServer.listen(3000, (message: string) => console.log(message));
 }
 
 main();
