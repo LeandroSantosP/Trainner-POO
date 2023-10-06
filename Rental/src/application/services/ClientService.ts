@@ -1,14 +1,6 @@
 import { ClientRepository } from "@/application/repository/ClientRepository";
 import { Client } from "@/domain/Client";
 
-type CreateClientInput = {
-    name: string;
-    email: string;
-    cpf: string;
-    password: string;
-    age: number;
-};
-
 export class ClientService {
     constructor(readonly clientRepository: ClientRepository) {}
 
@@ -23,3 +15,11 @@ export class ClientService {
         await this.clientRepository.persiste(client);
     }
 }
+
+type CreateClientInput = {
+    name: string;
+    email: string;
+    cpf: string;
+    password: string;
+    age: number;
+};

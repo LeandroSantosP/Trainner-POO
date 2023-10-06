@@ -25,7 +25,7 @@ export class RentalService {
             clientId: input.client_id,
             clock: this.clock,
             carStatus: car.status,
-            rentalReturnDate: input.return_rental_date,
+            rentalReturnDate: new Date(input.return_rental_date),
         });
 
         await this.rentRepository.persiste(carRental);
@@ -55,6 +55,7 @@ export class RentalService {
 
     async getRental(client_id: string): Promise<GetRentalOutput> {
         const rental = await this.rentRepository.getByClientId(client_id);
+
         return {
             car_plate: rental.getPlate(),
             rental_date_end: undefined,

@@ -9,6 +9,7 @@ export abstract class Rental {
 
     constructor(readonly id: string, readonly rentalReturnDate: Date, protected readonly clock: Clock) {
         const currentDate = clock.getCurrentTime();
+
         if (rentalReturnDate.getTime() < currentDate.getTime()) {
             throw new Error("Invalid Rental Date!");
         }

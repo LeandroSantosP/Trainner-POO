@@ -1,4 +1,4 @@
-export class document {
+export class Document {
     private value: string;
     constructor(document: string) {
         this.value = document;
@@ -9,16 +9,15 @@ export class document {
     }
 }
 
-export class Cpf extends document {
+export class Cpf extends Document {
     constructor(document: string) {
         super(document);
         if (!this.isValidCpf(document)) throw new Error("Invalid Document");
     }
 
     isValidCpf(strCPF: string) {
-        let Soma;
+        let Soma = 0;
         let Resto;
-        Soma = 0;
         if (strCPF == "00000000000") return false;
 
         for (let i = 1; i <= 9; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);

@@ -88,11 +88,10 @@ test("Deve ser possível alugar um carro e confirmar um pedido.", async function
 test("Deve Lançar um erro casso o carro nao esteja disponível", async () => {
     const clock = new FakeClock();
     clock.setCurrentTime(new Date("2023-05-23T10:00:00"));
-
-    await carRepository.save(new Car("AAA-3344", "unavailable"));
+    await carRepository.save(new Car("AAA-3341", "unavailable"));
     const input = {
         client_id: "111222333",
-        plate: "AAA-3344",
+        plate: "AAA-3341",
         return_rental_date: new Date("2023-06-21T10:00:00"),
     };
 
