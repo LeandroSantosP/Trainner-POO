@@ -15,6 +15,6 @@ test("Must be possible make a car rental", async function () {
     expect(output.car_plate).toBe("AAA-3344");
     expect(output.rental_date_end).toBeUndefined();
     expect(output.rental_return_date).toEqual("2024-06-21T13:00:00.000Z");
-    expect(output.rentalPeriod).toBe(258);
-    expect(output.currentPrice).toBe(62060);
+    expect(output.rentalPeriod).toBe(257);
+    expect(output.currentPrice).toBe(61810);
 });

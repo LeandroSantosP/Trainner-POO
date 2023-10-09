@@ -1,4 +1,3 @@
-import { Elysia } from "elysia";
 import { RentalService } from "./application/services/RentalService";
 import { PaymentGatewayFake } from "./infra/gateway/PaymentGatewayFake";
 import { FakeClock } from "./domain/FakeClock";
@@ -8,8 +7,6 @@ import { TransactionService } from "./application/services/TransactionService";
 import { TransactionRepositoryMemory } from "./infra/repository/TransactionRepositoryMemory";
 import { RestController } from "./infra/controller/RestController";
 import { ElysiaHttpServer } from "./infra/http/ElysiaHttpServer";
-
-const app = new Elysia();
 
 const paymentGateway = new PaymentGatewayFake();
 const clock = new FakeClock();

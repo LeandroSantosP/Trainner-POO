@@ -10,5 +10,8 @@ export class RestController {
             const output = await rentalCarService.getRental(params.id);
             return output;
         });
+        httpServer.on("get", "/", (body, params) => {
+            return "Hello world";
+        });
     }
 }
