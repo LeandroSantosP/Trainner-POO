@@ -8,7 +8,7 @@
     "build": "yarn && rimraf dist/ && tsc",
     "start": "yarn build && node dist/src/main.js",
     "proto:gen": "src/infra/grpc/proto-gen.sh",
-    "proto:dev": "ts-node src/infra/grpc/grpcServer.ts",
+    "proto:dev": "tsx watch src/infra/grpc/grpcServer.ts",
     "test": "jest --coverage=false",
     "knex:migrate:make": "knex --knexfile src/infra/database/knexfile.ts migrate:make",
     "knex:migrate:latest": "knex --knexfile src/infra/database/knexfile.ts migrate:latest",

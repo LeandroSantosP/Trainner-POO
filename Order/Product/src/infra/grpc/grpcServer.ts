@@ -2,13 +2,13 @@ import * as grpc from "@grpc/grpc-js";
 import path from "path";
 import * as grpcLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/productService";
-import { productServiceHandlers } from "./proto/productService/productService";
+import { productServiceHandlers } from "./proto/productServicePackage/productService";
 
 const PORT = 8082;
 
 const packageDefinition = grpcLoader.loadSync(path.resolve(__dirname, "./proto/productService.proto"));
 const grpcObj = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType;
-const productPackage = grpcObj.productService;
+const productPackage = grpcObj.productServicePackage;
 
 function main() {
     const server = getServer();
@@ -28,7 +28,13 @@ function getServer() {
 
     server.addService(productPackage.productService.service, {
         GetProducts(req, res) {
-            console.log(req, res);
+            res(null, {
+                products: [
+                    {
+                        fare: 1,
+                    },
+                ],
+            });
         },
     } as productServiceHandlers);
 

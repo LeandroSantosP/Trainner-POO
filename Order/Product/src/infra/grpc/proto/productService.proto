@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package productService;
+package productServicePackage;
 
-service productService{
+service productService {
     rpc GetProducts(GetProductsRequest) returns (GetProductsResponse) {}
 }
 
