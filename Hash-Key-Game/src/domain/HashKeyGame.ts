@@ -1,9 +1,5 @@
 import { Board } from "./Board";
 
-// add comment
-// add comment
-// add comment
-// add comment
 export class HashKeyGame {
   readonly board: Board;
   private status: string;
@@ -39,7 +35,6 @@ export class HashKeyGame {
     if (!this.board.validationPlay(line, column)) {
       throw new Error("Invalid position");
     }
-
     this.status = `Player ${this.lastPlayerPlay} turn`;
     this.lastPlayerPlay = player;
     const icon = player === this.playerOne ? "O" : "X";

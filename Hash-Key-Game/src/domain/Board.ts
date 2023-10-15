@@ -55,16 +55,19 @@ export class Board {
   }
 
   printBoard() {
+    console.log("  0 1 2");
     for (let i = 0; i < 3; i++) {
-      let linha = "";
+      let linha = `${i} `;
       for (let j = 0; j < 3; j++) {
         if (this.value[i][j].playBy === null) {
-          linha += " - ";
-          continue;
+          linha += "| - ";
+        } else {
+          linha += `| ${this.value[i][j].playBy} `;
         }
-        linha += this.value[i][j].playBy;
       }
+      linha += "|";
       console.log(linha);
+      console.log("  ---------");
     }
   }
 
