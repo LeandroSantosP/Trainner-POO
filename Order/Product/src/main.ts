@@ -1,4 +1,6 @@
 import dot from "dotenv";
+import grpcLoader from "@grpc/proto-loader";
+
 import { ProductService } from "./application/services/ProductService";
 import { RestController } from "./infra/controller/RestController";
 import { ExpressServerAdapter } from "./infra/http/ExpressServerAdapter";

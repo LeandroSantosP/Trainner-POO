@@ -7,6 +7,8 @@
     "dev": "tsx watch src/main.ts",
     "build": "yarn && rimraf dist/ && tsc",
     "start": "yarn build && node dist/src/main.js",
+    "proto:gen": "src/infra/grpc/proto-gen.sh",
+    "proto:dev": "ts-node src/infra/grpc/grpcServer.ts",
     "test": "jest --coverage=false",
     "knex:migrate:make": "knex --knexfile src/infra/database/knexfile.ts migrate:make",
     "knex:migrate:latest": "knex --knexfile src/infra/database/knexfile.ts migrate:latest",
@@ -47,6 +49,8 @@
     "typescript": "*"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.9.5",
+    "@grpc/proto-loader": "^0.7.10",
     "axios": "^1.5.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
