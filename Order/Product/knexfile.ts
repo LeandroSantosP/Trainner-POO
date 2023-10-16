@@ -1,13 +1,15 @@
-require("ts-node/register");
 import "dotenv/config";
+import { Knex } from "knex";
+
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
-module.exports = {
+
+const knexConfig: Knex.Config = {
     client: "pg",
     connection: {
         host: process.env.HOST,
-        port: process.env.DB_PORT,
+        port: Number(process.env.DB_PORT),
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: "postgres",
@@ -20,5 +22,6 @@ module.exports = {
         tableName: "knex_migrations",
         directory: "../database/migrations",
     },
-    timezone: "UTC",
 };
+
+export default knexConfig;

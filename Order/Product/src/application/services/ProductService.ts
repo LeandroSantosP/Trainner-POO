@@ -1,8 +1,6 @@
 import { ProductRepository } from "../repository/ProductRepository";
-
 export class ProductService {
     constructor(private readonly productRepository: ProductRepository) {}
-
     async getProducts(input: Input): Promise<Output> {
         if (!input.productIds) throw new Error("productsIds was required");
         let output: Output = {

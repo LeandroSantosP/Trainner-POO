@@ -5,12 +5,12 @@ import { RestController } from "./infra/controller/RestController";
 import { OrderService } from "./application";
 import { OrderServiceFactoryDatabase } from "./infra/factory/OrderServiceFactoryDatabase";
 import { FakeClock } from "./domain/domainServices/FakeClock";
-import { ProductGateway } from "./infra/gateways/ProductGateWay";
 import { AxiosHttpClient } from "./infra/httpClient/AxiosHttpClient";
 import { QueueController } from "./infra/queue/QueueController";
 import { BullMqBackgroundJob } from "./infra/backgroundJobs/BullMqBackgroundJob";
 import { RedisConnection } from "./infra/backgroundJobs/RedisConnection";
 import { LogJobHandler } from "./application/jobsHandlers/LogJobHandler";
+import { ProductGrpcGateway } from "./infra/grpcClient/ProductGrpcGateway";
 
 dovEnv.config();
 
@@ -26,7 +26,7 @@ async function main() {
     const httpClient = new AxiosHttpClient();
     const clock = new FakeClock();
     const orderServiceFactory = new OrderServiceFactoryDatabase();
-    const productGateway = new ProductGateway(httpClient);
+    const productGateway = new ProductGrpcGateway();
     bullMqAdapter.addJobs(new LogJobHandler());
     const orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
     new QueueController(queue, orderService);
