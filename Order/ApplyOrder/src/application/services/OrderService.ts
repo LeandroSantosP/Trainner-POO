@@ -58,9 +58,9 @@ export class OrderService {
         const distance = DistanceCalculator.execute(addressTo.cord, addressFrom.cord);
         const { freight } = FreightCalculator.execute(productDimensions, distance);
         order.setFreight(freight);
-        await this.orderRepository.persiste(order);
-        await this.queue.publisher("OrderApplied", new OrderApplied(input.items, clientEmail));
 
+        await this.orderRepository.persiste(order);
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
         // Order required
     }
 
