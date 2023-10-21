@@ -14,7 +14,7 @@ export enum ableFoodTypes {
   Meat = "Meat",
   Rise = "Rise",
   Desert = "Desert",
-  Soda = "Soda",
+  Soda = "Soda"
 }
 
 export class MeanDefaultFoodBuilder implements FoodBuildContract {

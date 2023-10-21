@@ -5,8 +5,6 @@ import { FakeClock } from "@/domain/domainServices/FakeClock";
 import { Coupon } from "@/domain/entity/Coupon";
 import knexConnection from "@/infra/database/knexfile";
 import { OrderServiceFactoryDatabase } from "@/infra/factory/OrderServiceFactoryDatabase";
-import { ProductGateway } from "@/infra/gateways/ProductGateWay";
-import { AxiosHttpClient } from "@/infra/httpClient/AxiosHttpClient";
 import { Queue } from "@/infra/queue/Queue";
 import { RabbitMqAdapter } from "@/infra/queue/RabbitMqAdapter";
 import knexClear from "knex-cleaner";
@@ -16,6 +14,7 @@ import { MailerGateway } from "@/application/interfaces/MailerGateway";
 import { BullMqBackgroundJob } from "@/infra/backgroundJobs/BullMqBackgroundJob";
 import { LogJobHandler } from "@/application/jobsHandlers/LogJobHandler";
 import { RedisConnection } from "@/infra/backgroundJobs/RedisConnection";
+import { ProductGrpcGateway } from "@/infra/grpcClient/ProductGrpcGateway";
 
 let applyOrderInput = {
     documentTo: "81307907008",
@@ -58,8 +57,7 @@ beforeEach(async () => {
     clock = new FakeClock();
     orderServiceFactory = new OrderServiceFactoryDatabase();
     clock.setCurrentDate(new Date("2023-10-10"));
-    const httpClient = new AxiosHttpClient();
-    const productGateway = new ProductGateway(httpClient);
+    const productGateway = new ProductGrpcGateway();
     bullMqAdapter.addJobs(new LogJobHandler());
     orderService = new OrderService(orderServiceFactory, productGateway, clock, queue);
 });

@@ -5,12 +5,13 @@ import { RestController } from "./infra/controller/RestController";
 import { OrderService } from "./application";
 import { OrderServiceFactoryDatabase } from "./infra/factory/OrderServiceFactoryDatabase";
 import { FakeClock } from "./domain/domainServices/FakeClock";
-import { ProductGateway } from "./infra/gateways/ProductGateWay";
 import { AxiosHttpClient } from "./infra/httpClient/AxiosHttpClient";
 import { QueueController } from "./infra/queue/QueueController";
 import { BullMqBackgroundJob } from "./infra/backgroundJobs/BullMqBackgroundJob";
 import { RedisConnection } from "./infra/backgroundJobs/RedisConnection";
 import { LogJobHandler } from "./application/jobsHandlers/LogJobHandler";
+import { ProductGrpcGateway } from "./infra/grpcClient/ProductGrpcGateway";
+import { ProductGateway } from "./infra/gateways/ProductGateWay";
 
 dovEnv.config();
 

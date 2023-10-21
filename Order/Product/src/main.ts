@@ -1,12 +1,12 @@
 import dot from "dotenv";
+import grpcLoader from "@grpc/proto-loader";
+
 import { ProductService } from "./application/services/ProductService";
-import { ProductRepositoryMemory } from "./infra/repository/ProductRepositoryMemory";
-import { RestController } from "./infra/controller/RestController";
-import { ExpressServerAdapter } from "./infra/http/ExpressServerAdapter";
 import { ProductRepositoryKnex } from "./infra/repository/ProductRepositoryKnex";
+import { GrpcServer } from "./infra/grpc/grpcServer";
 dot.config();
+
 const productRepository = new ProductRepositoryKnex();
 const productService = new ProductService(productRepository);
-const httpServer = new ExpressServerAdapter();
-new RestController(httpServer, productService);
-httpServer.listen(3001, () => console.log("Server is running on port 3001"));
+
+new GrpcServer(productService).init();

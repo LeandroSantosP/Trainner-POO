@@ -6,10 +6,10 @@ import { FreightCalculator } from "@/domain/domainServices/FreightCalculator";
 import { OrderServiceFactory } from "../factory/OrderServiceFactory";
 import { AddressRepository } from "../repository/AddressRepository";
 import { DistanceCalculator } from "@/domain/entity/DistanceCalculator";
-import { ProductGateway } from "@/infra/gateways/ProductGateWay";
 import { AppError } from "@/domain/entity/AppError";
 import { Queue } from "@/infra/queue/Queue";
 import { OrderApplied } from "@/infra/events/OrderApplied";
+import { ProductGateWay } from "../interfaces/ProductGateway";
 
 export class OrderService {
     readonly orderRepository: OrderRepository;
@@ -18,7 +18,7 @@ export class OrderService {
 
     constructor(
         orderServiceFactory: OrderServiceFactory,
-        readonly productGateway: ProductGateway,
+        readonly productGateway: ProductGateWay,
         readonly clock: Clock,
         readonly queue: Queue
     ) {
@@ -60,7 +60,7 @@ export class OrderService {
         order.setFreight(freight);
 
         await this.orderRepository.persiste(order);
-        await this.queue.publisher("OrderApplied", new OrderApplied(input.items, clientEmail));
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
         // Order required
     }
 

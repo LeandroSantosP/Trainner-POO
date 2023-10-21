@@ -17,4 +17,10 @@ export class CarRentRepositoryMemory implements CarRentRepository {
         if (!rental) throw new Error("Rental not found");
         return rental;
     }
+
+    async update(carRentUpdate: CarRental): Promise<void> {
+        const carRentalIndex = this.rentals.findIndex((rental) => rental.id === carRentUpdate.id);
+        if (carRentalIndex === -1) throw new Error("CarRental not found");
+        this.rentals.splice(carRentalIndex, 1, carRentUpdate);
+    }
 }

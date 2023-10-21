@@ -8,10 +8,10 @@ export class Period {
 
     getInHors() {
         const milissegundos = this.startDate.getTime() - this.endDate.getTime();
-        return milissegundos / (1000 * 60 * 60);
+        return Math.floor(milissegundos / (1000 * 60 * 60));
     }
 
     getInDays() {
-        return this.getInHors() / 24;
+        return Math.floor(this.getInHors() / 24);
     }
 }

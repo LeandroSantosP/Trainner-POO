@@ -1,0 +1,16 @@
+{
+  "name": "HashKeyGame",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "jest",
+    "dev": "bun run --watch src/main.ts"
+  },
+  "dependencies": {
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}

@@ -2,26 +2,26 @@ import { Clock } from "@/application/interfaces/Clock";
 import { Rental } from "./Rental";
 import { randomUUID } from "crypto";
 import { Price } from "./Price";
+import { CarStatus } from "./CarStatus";
 
 export class CarRental extends Rental {
+    readonly status: CarStatus;
     private priceForHors = 10;
     private price: Price;
+
     private constructor(
         id: string,
         rentalReturnDate: Date,
         readonly clientId: string,
         private readonly carPlate: string,
-        private readonly carStatus: string,
         readonly fereRentalInHors: number,
+        readonly carStatus: string,
         clock: Clock
     ) {
         super(id, rentalReturnDate, clock);
-
-        if (carStatus !== "available") throw new Error("Car not available!");
         const predictPrice = this.period.getInHors();
-        if (predictPrice < fereRentalInHors) {
-            throw new Error("Rental Is required to be greater than 24 hors.");
-        }
+        this.status = new CarStatus();
+        if (carStatus !== "available") throw new Error("Car is not available");
         const inicialPrice = this.priceForHors * predictPrice;
         this.price = new Price(inicialPrice);
     }
@@ -34,11 +34,37 @@ export class CarRental extends Rental {
             input.rentalReturnDate,
             input.clientId,
             input.carPlate,
-            input.carStatus,
             fereRentalInHors,
+            input.carStatus,
             input.clock
         );
     }
+
+    finishedRent(): { totalPrice: number; penaltyFare: number } {
+        let totalPrice = 0;
+        let PENALTY = 0;
+        const periodRecived = this.calculatePeriod(this.clock.getCurrentTime(), this.rentalReturnDate);
+        if (periodRecived.getInHors() <= 0) {
+            totalPrice = this.price.getValue();
+        }
+
+        if (periodRecived.getInHors() > 0) {
+            let PENALTY_FOR_HORS = 15;
+            let subtotal_penalty = PENALTY_FOR_HORS * periodRecived.getInHors();
+            totalPrice = this.price.getValue() + subtotal_penalty;
+            PENALTY = subtotal_penalty;
+        }
+
+        return {
+            totalPrice,
+            penaltyFare: PENALTY,
+        };
+    }
+
+    updateStatus(): Omit<CarStatus, "getValue"> {
+        return this.status;
+    }
+
     getPrice() {
         return this.price.getValue();
     }
@@ -51,9 +77,9 @@ export class CarRental extends Rental {
 type Input = {
     id?: string;
     rentalReturnDate: Date;
+    carStatus: string;
     clientId: string;
     carPlate: string;
-    carStatus: string;
     fereRentalInHors?: number;
     clock: Clock;
 };

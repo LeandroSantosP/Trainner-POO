@@ -2,7 +2,7 @@ import { CarRepository } from "@/application/repository/CarRepository";
 import { Car } from "@/domain/Car";
 
 export class CarRepositoryMemory implements CarRepository {
-    cars: Car[] = [];
+    cars: Car[] = [new Car("AAA-3344", "available")];
 
     async save(rent: Car): Promise<void> {
         this.cars.push(rent);
