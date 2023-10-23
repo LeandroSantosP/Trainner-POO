@@ -36,7 +36,7 @@ export class ProductGrpcGateway implements ProductGateWay {
                     (err, result) => {
                         if (err) {
                             console.error(err);
-                            return;
+                            reject(err);
                         }
                         resolve(result?.products);
                     }
