@@ -5,7 +5,7 @@ export class RabbitMqAdapter implements Queue {
     private connection!: Connection;
 
     async connect(): Promise<void> {
-        this.connection = await amqp.connect("amqp://admin:admin@localhost:5672");
+        this.connection = await amqp.connect("amqp://admin:1234@localhost:5672");
     }
     async publisher<T>(queueName: string, data: T): Promise<void> {
         const channel = await this.connection.createChannel();

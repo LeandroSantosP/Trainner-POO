@@ -60,7 +60,7 @@ export class OrderService {
         order.setFreight(freight);
 
         await this.orderRepository.persiste(order);
-        await this.queue.publisher("OrderApplied", new OrderApplied(input.items));
+        await this.queue.publisher("OrderApplied", new OrderApplied(input.items, ""));
         // Order required
     }
 
